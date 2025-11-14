@@ -45,6 +45,13 @@ def _split_dataset(path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
 
 
 def _summarize_dataset(data: pd.DataFrame, processed: bool = True):
+    """
+    Print out summary statistics for the dataset. Summary statistics include number of entries, number of labels, average number of labels per entry, percent of entries with each label.
+
+    Args:
+        data (pd.DataFrame): Dataset to summarize.
+        processed (bool, optional): Whether or not the data is from the processed dataset. This affects what labels are available. Defaults to True.
+    """
     num_entries = len(data)
     print(num_entries, "entries")
     print()
@@ -88,6 +95,14 @@ def _summarize_dataset(data: pd.DataFrame, processed: bool = True):
 def _create_data_files(
     train_exs: pd.DataFrame, dev_exs: pd.DataFrame, test_exs: pd.DataFrame
 ):
+    """
+    Create csv files in the data/ folder for the train/dev/test data
+
+    Args:
+        train_exs (pd.DataFrame): train dataset
+        dev_exs (pd.DataFrame): dev dataset
+        test_exs (pd.DataFrame): test dataset
+    """
     train_exs.to_csv("data/train_data.csv")
     dev_exs.to_csv("data/dev_data.csv")
     test_exs.to_csv("data/test_data.csv")
