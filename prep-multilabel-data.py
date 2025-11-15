@@ -19,24 +19,31 @@ def _parse_args():
         default="data/pubmed-multi-label-text-classification-dataset-processed.csv",
         help="path to full data set",
     )
+    parser.add_argument("--create_files", action=argparse.BooleanOptionalAction)
+    parser.add_argument(
+        "--summary",
+        type=str,
+        default="ALL",
+        help="dataset to summarize (ALL, TRAIN, DEV, or TEST)",
+    )
     args = parser.parse_args()
     return args
 
 
-def _split_dataset(path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def _split_dataset(
+    data: pd.DataFrame,
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Split the dataset into train, dev, test datasets.
 
     Args:
-        path (str): path to full dataset
+        data (pd.DataFrame): full dataset
 
     Returns:
         Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]: training data, dev data, test data
     """
-    full_data = pd.read_csv(path)
-
-    train_data_full = full_data.sample(frac=0.8, random_state=random_seed)
-    test_data = full_data.drop(train_data_full.index)
+    train_data_full = data.sample(frac=0.8, random_state=random_seed)
+    test_data = data.drop(train_data_full.index)
 
     train_data = train_data_full.sample(frac=0.8, random_state=random_seed)
     dev_data = train_data_full.drop(train_data.index)
@@ -82,14 +89,13 @@ def _summarize_dataset(data: pd.DataFrame, processed: bool = True):
     print(len(labels), "labels")
 
     num_labels = labels_only.sum(axis=1)
-    mean_label_count = num_labels.mean()
-    print("Average labels per example:", mean_label_count)
+    print("Number of labels per example:")
+    print(num_labels.describe())
     print()
 
     label_counts = labels_only.apply(pd.Series.value_counts).transpose()
     label_counts["percent"] = label_counts[1] / num_entries
     print(label_counts["percent"])
-    print()
 
 
 def _create_data_files(
@@ -112,15 +118,25 @@ if __name__ == "__main__":
     args = _parse_args()
     print(args)
 
-    train_exs, dev_exs, test_exs = _split_dataset(args.data_path)
+    if args.summary not in ["ALL", "TRAIN", "DEV", "TEST"]:
+        raise Exception("Invalid summary type")
 
-    print("Training Data")
-    train_summary = _summarize_dataset(train_exs)
+    full_data = pd.read_csv(args.data_path)
 
-    print("Dev Data")
-    dev_summary = _summarize_dataset(dev_exs)
+    train_exs, dev_exs, test_exs = _split_dataset(full_data)
 
-    # print("Test Data")
-    # tes_summary = _summarize_dataset(test_exs)
+    match args.summary:
+        case "ALL":
+            _summarize_dataset(full_data)
+        case "TRAIN":
+            print("Training Data")
+            _summarize_dataset(train_exs)
+        case "DEV":
+            print("Dev Data")
+            _summarize_dataset(dev_exs)
+        case "TEST":
+            print("Test Data")
+            _summarize_dataset(test_exs)
 
-    _create_data_files(train_exs, dev_exs, test_exs)
+    if args.create_files:
+        _create_data_files(train_exs, dev_exs, test_exs)
