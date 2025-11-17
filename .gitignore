@@ -1,1 +1,4 @@
-data/**
+data/pubmed-multi-label-text-classification-dataset.csv
+data/pubmed-multi-label-text-classification-dataset-processed.csv
+
+__pycache__
