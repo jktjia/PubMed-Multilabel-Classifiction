@@ -11,7 +11,9 @@ def _parse_args():
     """
     Command-line arguments to the system. --model switches between the main modes you'll need to use. The other arguments
     are provided for convenience.
-    :return: the parsed args bundle
+
+    Returns:
+        the parsed args bundle
     """
     parser = argparse.ArgumentParser(description="trainer.py")
     parser.add_argument(

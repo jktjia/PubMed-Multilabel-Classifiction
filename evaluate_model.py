@@ -1,14 +1,20 @@
 from typing import List
 
+from models import MultilabelClassifier
+from multilabel_example import MultilabelExample
 from prep_multilabel_data import processed_labels
 
 
-def evaluate(classifier, exs):
+def evaluate(classifier: MultilabelClassifier, exs: List[MultilabelExample]):
     """
     Evaluates a given classifier on the given examples
-    :param classifier: classifier to evaluate
-    :param exs: the list of SentimentExamples to evaluate on
-    :return: None (but prints output)
+
+    Args:
+        classifier (MultilabelClassifier): classifier to evaluate
+        exs (List[MultilabelExample]): the list of examples to evaluate on
+
+    Returns:
+        (float, float, float): micro, macro, and weighted average F1
     """
     return print_evaluation(
         [ex.labels for ex in exs],
@@ -22,12 +28,14 @@ def print_evaluation(
 ):
     """
     Prints evaluation statistics comparing golds and predictions, each of which is a sequence of 0/1 labels.
-    Prints accuracy as well as precision/recall/F1 of the positive class, which can sometimes be informative if either
-    the golds or predictions are highly biased.
+    Prints accuracy as well as micro, macro, and weighted average F1 of the positive class in addition to the number of exact matches.
 
-    :param golds: gold labels
-    :param predictions: pred labels
-    :return:
+    Args:
+        golds (List[List[int]]): gold labels
+        predictions (List[List[int]]): pred labels
+
+    Returns:
+        (float, float, float): micro, macro, and weighted average F1
     """
     num_correct = [0] * num_labels
     num_pos_correct = [0] * num_labels

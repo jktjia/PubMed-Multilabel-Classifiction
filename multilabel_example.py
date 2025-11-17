@@ -25,6 +25,15 @@ class MultilabelExample:
 
 
 def read_examples(path):
+    """
+    Reads in a csv of data and parses it into MultilabelExamples
+
+    Args:
+        path (str): path to csv of examples
+
+    Returns:
+        List[MultilabelExample]: list of examples parsed as MultilabelExamples
+    """
     df = pd.read_csv(path)
     df = df[processed_labels + ["abstractText"]]
     dicts = df.to_dict("records")
