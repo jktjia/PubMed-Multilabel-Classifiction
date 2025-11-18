@@ -4,46 +4,12 @@ import pandas as pd
 import nltk
 from nltk.tokenize import word_tokenize
 
+from utils import default_labels, processed_labels
+
 nltk.download("punkt")
 
 # fix the randomness to ensure reproducibility
 random_seed = 42
-
-processed_labels = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "L",
-    "M",
-    "N",
-    "Z",
-]
-
-default_labels = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "V",
-    "Z",
-]
 
 
 def _parse_args():
@@ -52,7 +18,7 @@ def _parse_args():
 
     Returns: the parsed args bundle
     """
-    parser = argparse.ArgumentParser(description="trainer.py")
+    parser = argparse.ArgumentParser(description="prep_multilabel_data.py")
     parser.add_argument(
         "--data_path",
         type=str,
@@ -112,26 +78,9 @@ def _summarize_dataset(data: pd.DataFrame, processed: bool = True):
     print()
 
     if processed:
-        labels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "L", "M", "N", "Z"]
+        labels = processed_labels
     else:
-        labels = [
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
-            "K",
-            "L",
-            "M",
-            "N",
-            "V",
-            "Z",
-        ]
+        labels = default_labels
 
     labels_only = data[labels]
     print(len(labels), "labels")
@@ -158,12 +107,17 @@ def _create_data_files(
         test_exs (pd.DataFrame): test dataset
     """
     train_exs.to_csv("data/train-data.csv")
-    train_exs.sample(frac=0.1, random_state=random_seed).to_csv(
+    train_exs.sample(frac=0.025, random_state=random_seed).to_csv(
         "data/train-data-small.csv"
     )
     dev_exs.to_csv("data/dev-data.csv")
-    dev_exs.sample(frac=0.1, random_state=random_seed).to_csv("data/dev-data-small.csv")
+    dev_exs.sample(frac=0.025, random_state=random_seed).to_csv(
+        "data/dev-data-small.csv"
+    )
     test_exs.to_csv("data/test-data.csv")
+    test_exs.sample(frac=0.025, random_state=random_seed).to_csv(
+        "data/test-data-small.csv"
+    )
 
 
 if __name__ == "__main__":

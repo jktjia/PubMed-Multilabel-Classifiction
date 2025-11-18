@@ -1,7 +1,11 @@
 import pandas as pd
 from nltk.tokenize import word_tokenize
+from nltk.lm import Vocabulary
+import nltk
 
 from prep_multilabel_data import processed_labels
+
+nltk.download("punkt")
 
 
 class MultilabelExample:
@@ -33,15 +37,18 @@ def read_examples(path):
 
     Returns:
         List[MultilabelExample]: list of examples parsed as MultilabelExamples
+        Vocabulary: vocabulary of abstracts in the examples
     """
     df = pd.read_csv(path)
     df = df[processed_labels + ["abstractText"]]
     dicts = df.to_dict("records")
     exs = []
+    # vocab = Vocabulary(unk_cutoff=1)
     for d in dicts:
         labels = [0] * len(processed_labels)
         for i, y in enumerate(processed_labels):
             labels[i] = d[y]
-        words = word_tokenize(d["abstractText"])
+        words = word_tokenize(text=d["abstractText"], language="english")
+        # vocab.update(words)
         exs += [MultilabelExample(words=words, labels=labels)]
     return exs

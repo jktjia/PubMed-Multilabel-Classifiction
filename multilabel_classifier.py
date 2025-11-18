@@ -2,9 +2,8 @@ import argparse
 import time
 
 from evaluate_model import evaluate
-from multilabel_example import read_examples
 from models import train_LR, TrivialMultilabelClassifier
-from prep_multilabel_data import processed_labels
+from utils import processed_labels, read_examples
 
 
 def _parse_args():
@@ -15,7 +14,7 @@ def _parse_args():
     Returns:
         the parsed args bundle
     """
-    parser = argparse.ArgumentParser(description="trainer.py")
+    parser = argparse.ArgumentParser(description="multilabel_classifier.py")
     parser.add_argument(
         "--model", type=str, default="TRIVIAL", help="model to run (TRIVIAL or LR)"
     )
@@ -33,7 +32,6 @@ if __name__ == "__main__":
     args = _parse_args()
     print(args)
 
-    # Load train, dev, and test exs and index the words.
     train_exs = read_examples("data/train-data-small.csv")
     dev_exs = read_examples("data/dev-data-small.csv")
     print(repr(len(train_exs)) + " / " + repr(len(dev_exs)) + " train/dev examples")
@@ -45,10 +43,10 @@ if __name__ == "__main__":
     else:
         model = TrivialMultilabelClassifier(num_labels=len(processed_labels))
 
-    print("=====Train Accuracy=====")
-    evaluate(model, train_exs)
+    print("\n=====Train Accuracy (200 examples)=====\n")
+    evaluate(model, train_exs[:200])
 
-    print("=====Dev Accuracy=====")
+    print("\n=====Dev Accuracy (whole dataset)=====\n")
     evaluate(model, dev_exs)
 
     train_eval_time = time.time() - start_time
