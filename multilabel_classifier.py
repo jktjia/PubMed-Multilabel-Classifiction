@@ -24,6 +24,7 @@ def _parse_args():
     parser.add_argument(
         "--num_epochs", type=int, default=10, help="number of epochs to train for"
     )
+    parser.add_argument("--batch_size", type=int, default=1, help="batch size")
     args = parser.parse_args()
     return args
 
@@ -50,4 +51,4 @@ if __name__ == "__main__":
     evaluate(model, dev_exs)
 
     train_eval_time = time.time() - start_time
-    print("Time for training and evaluation: %.2f seconds" % train_eval_time)
+    print("T\nime for training and evaluation: %.2f seconds" % train_eval_time)

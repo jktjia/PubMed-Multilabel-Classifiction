@@ -1,4 +1,5 @@
 from collections import Counter
+import math
 import random
 from typing import List
 import torch
@@ -76,10 +77,16 @@ class LRMultilabelClassifier(MultilabelClassifier):
         prediction = (probs > 0.5).int()
         return prediction
 
-    # def predict_all(self, all_ex_words: List[List[str]]) -> List[int]:
-    #     length = max([len(ex) for ex in all_ex_words])
-    #     x = torch.stack([self.words_to_tensor(ex, length) for ex in all_ex_words])
-    #     return self.nn_module.forward(x).argmax(dim=1)
+    def predict_all(self, all_ex_words: List[List[str]]) -> List[int]:
+        x = torch.stack(
+            [
+                torch.tensor([Counter(ex)[word] for word in self.vocab])
+                for ex in all_ex_words
+            ]
+        ).float()
+        probs = self.module.forward(x)
+        prediction = (probs > 0.5).int()
+        return prediction
 
 
 def train_LR(
@@ -98,6 +105,7 @@ def train_LR(
     """
     num_epochs = args.num_epochs
     initial_learning_rate = args.learning_rate
+    batch_size = args.batch_size
 
     vocab = create_vocab(train_exs)
     print("%i words in vocabulary" % len(vocab))
@@ -112,12 +120,17 @@ def train_LR(
     for epoch in range(0, num_epochs):
         random.shuffle(ex_idxs)
         total_loss = 0.0
-        for ex_idx in ex_idxs:
-            ex = train_exs[ex_idx]
-            word_count = Counter(ex.words)
-            bow_vector = [word_count[word] for word in vocab]
-            x = torch.tensor(bow_vector, dtype=torch.float32)
-            y = torch.tensor(ex.labels).float()
+        for n in range(math.ceil(len(ex_idxs) / batch_size)):
+            exs = [
+                train_exs[idx] for idx in ex_idxs[batch_size * n : batch_size * (n + 1)]
+            ]
+            x = torch.stack(
+                [
+                    torch.tensor([Counter(ex.words)[word] for word in vocab])
+                    for ex in exs
+                ]
+            ).float()
+            y = torch.tensor([ex.labels for ex in exs]).float()
 
             probs = model.module.forward(x)
 
