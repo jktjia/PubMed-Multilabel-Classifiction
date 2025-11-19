@@ -35,19 +35,32 @@ class MultilabelClassifier(object):
         raise Exception("Don't call me, call my subclasses")
 
     def predict_all(self, all_ex_words: List[List[str]]) -> List[List[int]]:
+        """
+        Makes predictions for each sentence in a given list of sentences
+
+        Args:
+            all_ex_words (List[List[str]]): list of sentences to predict
+
+        Returns:
+            List[List[int]]: 0 or 1 for each label for each sentence
+        """
         return [self.predict(ex_words) for ex_words in all_ex_words]
 
 
 class TrivialMultilabelClassifier(MultilabelClassifier):
+    """
+    Trivial multilabel classifier that always returns 0 for all labels
+    """
+
     def predict(self, ex_words: List[str]) -> List[int]:
         return [0] * self.num_labels
 
 
 class LRMultilabelModule(nn.Module):
-    def __init__(self, num_labels: int, vocab_size: int):
+    def __init__(self, num_labels: int, in_size: int):
         super().__init__()
         self.seq = nn.Sequential(
-            nn.Linear(vocab_size, num_labels),
+            nn.Linear(in_size, num_labels),
             nn.Sigmoid(),
         )
 
@@ -56,20 +69,19 @@ class LRMultilabelModule(nn.Module):
 
 
 class LRMultilabelClassifier(MultilabelClassifier):
+    """
+    Logistic regression multilabel classifier
+    """
+
     def __init__(self, num_labels: int, vocab: Vocabulary):
         super().__init__(num_labels)
         self.vocab = vocab
         self.module = LRMultilabelModule(
             num_labels=num_labels,
-            vocab_size=len(vocab),
+            in_size=len(vocab),
         )
 
     def predict(self, ex_words: List[str]) -> int:
-        """
-        Makes a prediction on the given sentence
-        :param ex_words: words to predict on
-        :return: list of 0 or 1 for the labels
-        """
         word_count = Counter(ex_words)
         bow_vector = [word_count[word] for word in self.vocab]
         x = torch.tensor(bow_vector, dtype=torch.float32)
@@ -94,14 +106,18 @@ def train_LR(
     train_exs: List[MultilabelExample],
     dev_exs: List[MultilabelExample],
     num_labels: int,
-    # vocab: Vocabulary,
 ) -> LRMultilabelClassifier:
     """
-    :param args: Command-line args so you can access them here
-    :param train_exs: training examples
-    :param dev_exs: development set, in case you wish to evaluate your model during training
-    :param word_embeddings: set of loaded word embeddings
-    :return: A trained NeuralSentimentClassifier model
+    Trains a logistic regression multilabel classifier on the given training examples
+
+    Args:
+        args (_type_): command line args
+        train_exs (List[MultilabelExample]): training examples
+        dev_exs (List[MultilabelExample]): development set
+        num_labels (int): number of labels
+
+    Returns:
+        LRMultilabelClassifier: A trained LRMultilabelClassifier model
     """
     num_epochs = args.num_epochs
     initial_learning_rate = args.learning_rate

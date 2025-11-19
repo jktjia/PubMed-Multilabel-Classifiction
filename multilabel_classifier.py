@@ -51,4 +51,4 @@ if __name__ == "__main__":
     evaluate(model, dev_exs)
 
     train_eval_time = time.time() - start_time
-    print("T\nime for training and evaluation: %.2f seconds" % train_eval_time)
+    print("\nTime for training and evaluation: %.2f seconds" % train_eval_time)

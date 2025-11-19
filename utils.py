@@ -59,11 +59,12 @@ def create_vocab(
 
     Args:
         exs (List[MultilabelExample]): list of examples
+        include_stopwords (bool | None): should stopwords be included in the vocabulary
 
     Returns:
         Vocabulary: nltk vocabulary
     """
-    vocab = Vocabulary(unk_cutoff=1)
+    vocab = Vocabulary(unk_cutoff=2)
 
     words = [i for ex in exs for i in ex.words]
     if not include_stopwords:
