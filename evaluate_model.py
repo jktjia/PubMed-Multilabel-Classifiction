@@ -1,8 +1,7 @@
 from typing import List
 
 from models import MultilabelClassifier
-from multilabel_example import MultilabelExample
-from prep_multilabel_data import processed_labels
+from utils import processed_labels, MultilabelExample
 
 
 def evaluate(classifier: MultilabelClassifier, exs: List[MultilabelExample]):
@@ -68,20 +67,19 @@ def print_evaluation(
         if exact_match:
             num_match += 1
 
-    total_acc = float(sum(num_correct)) / sum(num_total)
-    output_str = "Total Accuracy: %i / %i = %f" % (
+    output_str = "Total Accuracy: %i / %i = %f;\n" % (
         sum(num_correct),
         sum(num_total),
-        total_acc,
+        float(sum(num_correct)) / sum(num_total),
     )
     label_acc = [
-        float(num_pos_correct[i]) / num_total[i] if num_total[i] > 0 else 0.0
+        float(num_correct[i]) / num_total[i] if num_total[i] > 0 else 0.0
         for i in range(num_labels)
     ]
     for i, label in enumerate(processed_labels):
-        output_str += "\n%s Accuracy: %i / %i = %f" % (
+        output_str += "%s Accuracy: %i / %i = %f;\n" % (
             label,
-            num_pos_correct[i],
+            num_correct[i],
             num_total[i],
             label_acc[i],
         )
@@ -118,6 +116,11 @@ def print_evaluation(
         num_match,
         len(golds),
         num_match / len(golds),
+    )
+    output_str += "Hamming Loss: %i / %i = %f" % (
+        sum(num_total) - sum(num_correct),
+        sum(num_total),
+        float(sum(num_total) - sum(num_correct)) / sum(num_total),
     )
     print(output_str)
     return macro_f1, micro_f1, weighted_f1
