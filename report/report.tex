@@ -75,9 +75,11 @@
 
 \section{Introduction}
 
-\emph{What is this project about? Goals, motivation, etc...}
+The growth of biomedical literature has created a need for automated methods to organize and classify research articles effectively. Manually labeling articles with relevant Medical Subject Headings (MeSH) is labor-intensive and time-consuming, making automated multi-label classification a helpful tool for researchers and clinicians.
 
-We want to train a transformer model BERT to handle multi label classification for biomedical research articles. ………..
+This project aims to use a transformer-based language model, specifically BERT, to perform multi-label classification on biomedical research articles. Instead of traditional single-label classification, we use multi-label classification, which will require assigning multiple overlapping labels to each article, reflecting the interconnected nature of biomedical papers.
+
+Our goals are: (1) to train and evaluate a BERT model for accurately predicting MeSH root labels; and (2) to compare its performance against more conventional models, including logistic regression, CNNs, and RNNs. By doing so, we hope to demonstrate the advantages of transformer-based models in capturing contextual information and label correlations in biomedical texts, ultimately providing a tool for organizing and analyzing the PubMed corpus.
 
 \section{Background/Related Work}
 
