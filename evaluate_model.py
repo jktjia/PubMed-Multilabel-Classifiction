@@ -124,7 +124,7 @@ def _calculate_eval(
         len(golds),
         exact_match,
     )
-    output_str += "Hamming Loss: %i / %i = %f" % (
+    output_str += "Hamming Loss: %i / %i = %f;" % (
         sum(num_total) - sum(num_correct),
         sum(num_total),
         hamming_loss,

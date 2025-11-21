@@ -1,7 +1,10 @@
-{
-  "macro_f1": 0.0,
-  "micro_f1": 0.0,
-  "weighted_f1": 0.0,
-  "exact_match_ratio": 0.0055,
-  "hamming_loss": 0.408804
-}
+[
+  {
+    "macro_f1": 0.0,
+    "micro_f1": 0.0,
+    "weighted_f1": 0.0,
+    "exact_match_ratio": 0.0055,
+    "hamming_loss": 0.408804,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.000000;\nMacro F1 (F1 averaged over each label): 0.000000;\nWeighted F1 (F1 weighted by label occurrences): 0.000000;\nExact Match: 44 / 8000 = 0.005500;\nHamming Loss: 45786 / 112000 = 0.408804;"
+  }
+]

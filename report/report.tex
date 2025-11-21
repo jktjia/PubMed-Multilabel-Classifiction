@@ -30,6 +30,7 @@
 \usepackage{caption}
 \usepackage{graphicx}
 \usepackage{cuted}
+\usepackage{subcaption}
 
 \graphicspath{ {../plots/} }
 
@@ -91,11 +92,10 @@ Describe any background or related work \cite{peng2021multilabelclassificationwi
 PubMed. This information includes 16 MB of data on the article titles, abstracts, and Medical Subject Heading (MeSH)
 labels.
 
-MeSH labels are arranged into a nested hierarchy with 16 root labels. Each article has up to 13
+MeSH labels are arranged into a nested hierarchy with 16 root labels (see Table 1). Each article has up to 13
 root labels, with a median root label count of six. Two labels---Humanities [K] and Publication
-Characteristics [V]---have been ignored due to their infrequency in the available data. Across
-50,000 sample articles, exactly one sample has label K and none have label V. The 12 included
-labels each appear in at least ten percent of the sample articles.
+Characteristics [V]---have been ignored due to their infrequency in the available data. The 12 included
+labels each appear in at least ten percent of the sample articles (see Figure 1).
 
 
 \begin{figure*}
@@ -122,7 +122,7 @@ labels each appear in at least ten percent of the sample articles.
 \begin{table*}
 	[p]
 	\centering
-	\captionof{table}{Labels} \label{tab2:title}
+	\captionof{table}{Full Label Names} \label{tab2:title}
 	\begin{tabular}{ c l }
 		\Xhline{1.5pt}
 		\bf Label & \bf Name                                                         \\[0.5ex]
@@ -218,6 +218,41 @@ training and inference approaches, etc..
 \subsection{Results}
 
 Report your results using tables and plots as appropriate.
+
+\begin{figure*}[t]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=\textwidth]{macro_f1.png}
+		\captionof{figure}{Macro F1}
+		\label{fig:macro_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=\textwidth]{micro_f1.png}
+		\captionof{figure}{Micro F1}
+		\label{fig:micro_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=\textwidth]{weighted_f1.png}
+		\captionof{figure}{Weighted F1}
+		\label{fig:weighted_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=\textwidth]{exact_match_ratio.png}
+		\captionof{figure}{Exact Match Ratio}
+		\label{fig:exact_match}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.45\textwidth}
+		\includegraphics[width=\textwidth]{hamming_loss.png}
+		\captionof{figure}{Hamming Loss}
+		\label{fig:hamming_loss}
+	\end{subfigure}
+	\captionof{figure}{Performance Metrics by Epoch}
+	\label{fig:perf_metrics}
+\end{figure*}
 
 \section{Conclusions}
 
