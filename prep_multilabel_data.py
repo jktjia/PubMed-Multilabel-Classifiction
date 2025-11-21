@@ -57,7 +57,7 @@ def _split_dataset(
     return train_data, dev_data, test_data
 
 
-def _summarize_dataset(data: pd.DataFrame, processed: bool = True):
+def _summarize_dataset(data: pd.DataFrame, processed: bool = True, plot: bool = False):
     """
     Print out summary statistics for the dataset. Summary statistics include number of entries, number of labels, average number of labels per entry, percent of entries with each label.
 
@@ -107,14 +107,19 @@ def _create_data_files(
         test_exs (pd.DataFrame): test dataset
     """
     train_exs.to_csv("data/train-data.csv")
+    train_exs.sample(frac=0.1, random_state=random_seed).to_csv(
+        "data/train-data-med.csv"
+    )
     train_exs.sample(frac=0.025, random_state=random_seed).to_csv(
         "data/train-data-small.csv"
     )
     dev_exs.to_csv("data/dev-data.csv")
+    dev_exs.sample(frac=0.1, random_state=random_seed).to_csv("data/dev-data-med.csv")
     dev_exs.sample(frac=0.025, random_state=random_seed).to_csv(
         "data/dev-data-small.csv"
     )
     test_exs.to_csv("data/test-data.csv")
+    test_exs.sample(frac=0.1, random_state=random_seed).to_csv("data/test-data-med.csv")
     test_exs.sample(frac=0.025, random_state=random_seed).to_csv(
         "data/test-data-small.csv"
     )

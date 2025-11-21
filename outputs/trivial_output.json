@@ -1,0 +1,7 @@
+{
+  "macro_f1": 0.0,
+  "micro_f1": 0.0,
+  "weighted_f1": 0.0,
+  "exact_match_ratio": 0.0055,
+  "hamming_loss": 0.408804
+}

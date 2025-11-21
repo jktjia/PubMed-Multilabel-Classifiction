@@ -13,3 +13,7 @@ python multilabel_classifier.py [--model MODEL] [--learning_rate LEARNING_RATE] 
 ```
 
 Currently, the available models are TRIVIAL (trivial classifier that assigns every label as false) and LR (logistic regression).
+
+## Outputs
+
+Currently, the outputs are all for tests with 25 epochs for batch sizes of 25 and learning rates of 0.001
