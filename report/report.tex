@@ -178,13 +178,21 @@ article abstracts are an average of 222 tokens long (see Figure 3).
 
 \section{Methods}
 
-We adjusted the BioBERT model (biobert-base-cased-v1.2) to assign medical summaries to up to 14 MeSH groups that may overlap; input texts were split into tokens while limiting total sequence length to 128 units. Instead of stacking multiple layers, a single linear module was connected to the model's final output - transforming hidden states into 14 separate prediction values. Since articles might fit more than one label at once, outputs used individual sigmoid functions per node, avoiding Softmax which assumes exclusive classes. This setup allowed parallel probability estimates across topics. Training relied on BCEWithLogitsLoss - a unified method combining sigmoids and binary loss - for better computational reliability during optimization. We adjusted the model’s settings using AdamW at a learning rate of 2e-5, training for 25 epochs with batches of 16. At prediction time, a fixed cutoff of 0.5 was used - categories surpassing it were linked to the text.
+We adjusted the BioBERT model (biobert-base-cased-v1.2) to assign medical summaries to up to 14 MeSH
+groups that may overlap; input texts were split into tokens while limiting total sequence length to
+128 units. Instead of stacking multiple layers, a single linear module was connected to the model's
+final output, transforming hidden states into 14 separate prediction values. Since articles might
+fit more than one label at once, outputs used individual sigmoid functions per node, avoiding softmax
+which assumes exclusive classes. This setup allowed parallel probability estimates across topics.
+Training relied on BCEWithLogitsLoss---a unified method combining sigmoids and binary loss---for
+better computational reliability during optimization. At prediction time, a fixed cutoff of 0.5 was
+used; categories surpassing the cutoff were linked to the text.
 
 The performance of the fine-tuned BERT model was measured against three baseline models which were
 trained as follows.
 
 The logistic regression model serves as a basic neural starting point while performing effectively
-like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 100 dimensions by
+like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 256 dimensions by
 default, this component converts word IDs into compact vector forms. Rather than tracking sequence
 position, it computes the average of these embedded values throughout the full text entry. As a result,
 one consolidated mean vector emerges, capturing the overall meaning of the abstract. This average form
@@ -192,18 +200,18 @@ feeds straight into a linear layer, then uses BCEWithLogitsLoss for training. Th
 label's likelihood separately, yet maintains fast response times.
 
 The CNN approach detects local word sequences and meaningful phrases in text, no matter where they
-appear. Instead of focusing on exact positions, it processes embedded inputs using a 1D conv layer
-with a broad window size 50 and moves forward by steps of 20 to capture distinct signals from the
-abstract. Following this step, global max pooling selects the strongest activation per filter over
+appear. Instead of focusing on exact positions, it processes embedded inputs with length 256 using a 1D
+convolutional layer with a window size of 50 and moves forward by steps of 20 to capture distinct signals
+from the abstract. Following this step, global max pooling selects the strongest activation per filter over
 the full input span. Then, these selected outputs use BCEWithLogitsLoss for training so that multiple
 labels can be predicted at once.
 
 The RNN model handles word order by applying a Bi-LSTM setup. First, an embedding step converts
-split text into 256-element vectors. Then, these representations enter a Bi-LSTM block containing
+split text into 256 element vectors. Then, these representations enter a Bi-LSTM block containing
 128 memory cells. Instead of one direction only, processing occurs left-to-right and right-to-left
 to grasp full-sentence meaning. Afterward, outputs from both flows merge before entering a dense
 layer. That last component computes unnormalized scores directly. During inference, logits become
-probabilities using a sigmoid activation. With a 0.3 cutoff, multi-label outputs turn into binary
+probabilities using a sigmoid activation. With a set cutoff, multi-label outputs turn into binary
 results.
 
 \section{Experiments}
