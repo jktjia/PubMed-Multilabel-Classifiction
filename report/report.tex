@@ -193,19 +193,19 @@ The performance of the fine-tuned BERT model was measured against three baseline
 trained as follows.
 
 The logistic regression model serves as a basic neural starting point while performing effectively
-like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 100 dimensions by
+like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 100 dimensions by 
 default, this component converts word IDs into compact vector forms. Rather than tracking sequence
-position, it computes the average of these embedded values throughout the full text entry. As a
-result, one consolidated mean vector emerges, capturing the overall meaning of the abstract. This
-average form feeds straight into a linear layer, then passes through a Sigmoid function. The
-approach estimates each label's likelihood separately, yet maintains fast response times.
+position, it computes the average of these embedded values throughout the full text entry. As a result,
+one consolidated mean vector emerges, capturing the overall meaning of the abstract. This average form
+feeds straight into a linear layer, then uses BCEWithLogitsLoss for training. The approach estimates each
+label's likelihood separately, yet maintains fast response times.
 
 The CNN approach detects local word sequences and meaningful phrases in text, no matter where they
 appear. Instead of focusing on exact positions, it processes embedded inputs using a 1D conv layer
-with a broad window---size 25---and moves forward by steps of 10 to capture distinct signals from
-the abstract. Following this step, global max pooling selects the strongest activation per filter
-over the full input span. Then, these selected outputs pass through a Sigmoid function so that
-multiple labels can be predicted at once.
+with a broad window size 50 and moves forward by steps of 20 to capture distinct signals from the 
+abstract. Following this step, global max pooling selects the strongest activation per filter over 
+the full input span. Then, these selected outputs use BCEWithLogitsLoss for training so that multiple 
+labels can be predicted at once.
 
 The RNN model handles word order by applying a Bi-LSTM setup. First, an embedding step converts
 split text into 256-element vectors. Then, these representations enter a Bi-LSTM block containing
