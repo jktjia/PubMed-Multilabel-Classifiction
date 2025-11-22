@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from utils import processed_labels, label_names
 
 sns.set_style("whitegrid")
-sns.set_theme(rc={"text.usetex": True})
+sns.set_theme(font_scale=1.25, rc={"text.usetex": True})
 plt.rc("text", usetex=True)
 plt.rc("font", family="serif")
 
@@ -60,7 +60,7 @@ def _plot_data_summary(data: pd.DataFrame):
     print("Label freq graph saved to %s" % label_freq_out)
 
     plt.figure(figsize=(10, 6))
-    sns.histplot(data["label_count"], discrete=True, color="blue", binwidth=1)
+    sns.histplot(data=data, x="label_count", discrete=True, color="blue", binwidth=1)
     plt.xlabel("Number of Labels")
     plt.xticks(range(0, len(processed_labels) + 1))
     plt.tight_layout()
@@ -70,7 +70,7 @@ def _plot_data_summary(data: pd.DataFrame):
     print("Label count graph saved to %s" % label_sample_out)
 
     plt.figure(figsize=(10, 6))
-    sns.histplot(data["abstract_len"], bins=50, color="blue")
+    sns.histplot(data=data, x="abstract_len", bins=50, color="blue")
     # plt.title("Distribution of Abstract Lengths")
     plt.xlabel("Abstract Length")
     plt.tight_layout()
@@ -88,7 +88,7 @@ def _read_performance(model_paths: dict[str, str]):
             if model == "Trivial":
                 data = data * 25
             df = pd.DataFrame(data)
-            df["model"] = model
+            df["Model"] = model
             df["epoch"] = df.index
             df = df.reindex()
             perf_data = pd.concat([perf_data, df])
@@ -96,100 +96,33 @@ def _read_performance(model_paths: dict[str, str]):
 
 
 def _plot_performance(data: pd.DataFrame):
-    plt.figure(figsize=(6, 6))
-    sns.catplot(
-        x="epoch",
-        y="macro_f1",
-        hue="model",
-        data=data,
-        kind="point",
-        palette="viridis",
-        legend_out=True,
-    )
-    plt.xlabel("Epoch")
-    # plt.ylabel("Macro F1")
-    plt.ylabel("")
-    plt.tight_layout()
-    macro_out = f"{DEST_DIR}/macro_f1.png"
-    plt.savefig(macro_out, dpi=300)
-    plt.close()
-    print("Macro F1 graph saved to %s" % macro_out)
+    metrics = [
+        "macro_f1",
+        "micro_f1",
+        "weighted_f1",
+        "exact_match_ratio",
+        "hamming_loss",
+    ]
 
-    plt.figure(figsize=(6, 6))
-    sns.catplot(
-        x="epoch",
-        y="micro_f1",
-        hue="model",
-        data=data,
-        kind="point",
-        palette="viridis",
-        legend_out=True,
-    )
-    plt.xlabel("Epoch")
-    # plt.ylabel("Micro F1")
-    plt.ylabel("")
-    plt.tight_layout()
-    micro_out = f"{DEST_DIR}/micro_f1.png"
-    plt.savefig(micro_out, dpi=300)
-    plt.close()
-    print("Micro F1 graph saved to %s " % micro_out)
-
-    plt.figure(figsize=(6, 6))
-    sns.catplot(
-        x="epoch",
-        y="weighted_f1",
-        hue="model",
-        data=data,
-        kind="point",
-        palette="viridis",
-        legend_out=True,
-    )
-    plt.xlabel("Epoch")
-    # plt.ylabel("Weighted F1")
-    plt.ylabel("")
-    plt.tight_layout()
-    weighted_out = f"{DEST_DIR}/weighted_f1.png"
-    plt.savefig(weighted_out, dpi=300)
-    plt.close()
-    print("Weighted F1 graph saved to %s" % weighted_out)
-
-    plt.figure(figsize=(6, 6))
-    sns.catplot(
-        x="epoch",
-        y="exact_match_ratio",
-        hue="model",
-        data=data,
-        kind="point",
-        palette="viridis",
-        legend_out=True,
-    )
-    plt.xlabel("Epoch")
-    # plt.ylabel("Exact Match Ratio")
-    plt.ylabel("")
-    plt.tight_layout()
-    exact_match_out = f"{DEST_DIR}/exact_match_ratio.png"
-    plt.savefig(exact_match_out, dpi=300)
-    plt.close()
-    print("Exact match graph saved to %s" % exact_match_out)
-
-    plt.figure(figsize=(6, 6))
-    sns.catplot(
-        x="epoch",
-        y="hamming_loss",
-        hue="model",
-        data=data,
-        kind="point",
-        palette="viridis",
-        legend_out=True,
-    )
-    plt.xlabel("Epoch")
-    # plt.ylabel("Hamming Loss")
-    plt.ylabel("")
-    plt.tight_layout()
-    hamming_out = f"{DEST_DIR}/hamming_loss.png"
-    plt.savefig(hamming_out, dpi=300)
-    plt.close()
-    print("Hamming loss graph saved to %s" % hamming_out)
+    for metric in metrics:
+        plt.figure(figsize=(10, 6))
+        sns.catplot(
+            x="epoch",
+            y=metric,
+            hue="Model",
+            data=data,
+            kind="point",
+            palette="viridis",
+            aspect=1.5,
+        )
+        plt.xlabel("Epoch")
+        plt.ylim(0, 1)
+        plt.ylabel("")
+        plt.xticks([4 * x for x in range(0, 7)])
+        out = "%s/%s.png" % (DEST_DIR, metric)
+        plt.savefig(out, dpi=300)
+        plt.close()
+        print("%s graph saved to %s" % (metric.replace("_", " ").capitalize(), out))
 
 
 if __name__ == "__main__":
@@ -203,8 +136,10 @@ if __name__ == "__main__":
 
     if args.plots == "ALL" or args.plots == "PERF":
         model_paths = {
-            "Trivial": "outputs/trivial_output.json",
+            # "Trivial": "outputs/trivial_output.json",
             "LR": "outputs/lr_output.json",
+            "CNN": "outputs/cnn_output.json",
+            "RNN": "outputs/rnn_output.json",
         }
         perf = _read_performance(model_paths=model_paths)
         print("\nRead in performance data for %i models" % len(model_paths))

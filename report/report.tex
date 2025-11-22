@@ -68,63 +68,55 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-	This is a template for your project report. This template is used for
-	submissions to the ACL conference. You can see the original files here (\url{https://github.com/acl-org/acl-style-files/tree/master/latex})
-	which have additional instructions on how to use this template.
+	This is a template for your project report. This template is used for submissions to the ACL conference. You can see the original files here (\url{https://github.com/acl-org/acl-style-files/tree/master/latex}) which have additional instructions on how to use this template.
 \end{abstract}
 
 \section{Introduction}
 
-The growth of biomedical literature has created a need for automated methods to organize and classify research articles effectively. Manually labeling articles with relevant Medical Subject Headings (MeSH) is labor-intensive and time-consuming, making automated multi-label classification a helpful tool for researchers and clinicians.
+The growth of biomedical literature has created a need for automated methods to organize and
+classify research articles effectively. Manually labeling articles with relevant Medical Subject
+Headings (MeSH) is labor-intensive and time-consuming, making automated multi-label classification
+a helpful tool for researchers and clinicians.
 
-This project aims to use a transformer-based language model, specifically BERT, to perform multi-label classification on biomedical research articles. Instead of traditional single-label classification, we use multi-label classification, which will require assigning multiple overlapping labels to each article, reflecting the interconnected nature of biomedical papers.
+This project aims to use a transformer-based language model, specifically BERT, to perform
+multi-label classification on biomedical research articles. Instead of traditional single-label
+classification, we use multi-label classification, as articles are typically associated with
+multiple MeSH tags.
 
-Our goals are: (1) to train and evaluate a BERT model for accurately predicting MeSH root labels; and (2) to compare its performance against more conventional models, including logistic regression, CNNs, and RNNs. By doing so, we hope to demonstrate the advantages of transformer-based models in capturing contextual information and label correlations in biomedical texts, ultimately providing a tool for organizing and analyzing the PubMed corpus.
+Our goals are: (1) to train and evaluate a BERT model for accurately predicting MeSH root labels
+and (2) to compare its performance against more conventional models, including logistic regression,
+CNNs, and RNNs. By doing so, we hope to demonstrate the advantages of transformer-based models in
+capturing contextual information and label correlations in biomedical texts, ultimately providing a
+tool for organizing and analyzing the PubMed corpus.
 
 \section{Background/Related Work}
 
-Describe any background or related work \cite{peng2021multilabelclassificationwithRNN}
+Describe any background or related work
 
 \section{Data}
 
-\emph{Describe the datasets and any preprocessing, cleaning that you may have done.}
-
-\href{https://www.kaggle.com/datasets/owaiskhan9654/pubmed-multilabel-text-classification}
-{PubMed MultiLabel Text Classification Dataset MeSH} contains information on 50,000 articles from
-PubMed. This information includes 16 MB of data on the article titles, abstracts, and Medical Subject Heading (MeSH)
-labels.
-
-MeSH labels are arranged into a nested hierarchy with 16 root labels (see Table 1). Each article has up to 13
-root labels, with a median root label count of six. Two labels---Humanities [K] and Publication
-Characteristics [V]---have been ignored due to their infrequency in the available data. The 12 included
-labels each appear in at least ten percent of the sample articles (see Figure 1).
-
-
 \begin{figure*}
+	[!htb]
 	\centering
-	\captionof{figure}{Frequency of MeSH Root Labels}
 	\includegraphics[width=\textwidth]{label_freq.png}
+	\captionof{figure}{Frequency of MeSH Root Labels}
 	\label{fig:label_freq}
 \end{figure*}
 
-\begin{figure*}
-	\centering
-	\captionof{figure}{Number of Labels per Abstract}
-	\includegraphics[width=\textwidth]{labels_per_sample.png}
-	\label{fig:label_per_sample}
-\end{figure*}
+The baseline and BERT models were all trained and tested on the dataset
+\href{https://www.kaggle.com/datasets/owaiskhan9654/pubmed-multilabel-text-classification}
+{PubMed MultiLabel Text Classification Dataset MeSH}. This dataset contains information on 50,000
+articles from PubMed, including each article's title, abstract, and Medical Subject Heading (MeSH)
+labels.
 
-\begin{figure*}
-	\centering
-	\captionof{figure}{Distribution of Abstract Lengths}
-	\includegraphics[width=\textwidth]{text_lengths.png}
-	\label{fig:text_len}
-\end{figure*}
+MeSH labels are arranged into a nested hierarchy with 16 root labels (see Table 1). Two
+labels---Humanities [K] and Publication Characteristics [V]---have been excluded due to their
+infrequency in the available data. The 14 included labels each appear in at least ten percent of
+the sample articles (see Figure 1).
 
 \begin{table*}
 	[p]
 	\centering
-	\captionof{table}{Full Label Names} \label{tab2:title}
 	\begin{tabular}{ c l }
 		\Xhline{1.5pt}
 		\bf Label & \bf Name                                                         \\[0.5ex]
@@ -163,97 +155,108 @@ labels each appear in at least ten percent of the sample articles (see Figure 1)
 		Z         & Geographicals                                                    \\[1ex]
 		\Xhline{1.5pt}
 	\end{tabular}
+	\captionof{table}{Full Label Names}
+	\label{tab:label_names}
 \end{table*}
 
-\begin{table*}
-	[p]
-	\centering
-	\captionof{table}{Label Distribution} \label{tab3:title}
-	\begin{tabular}{c c c c c }
-		\Xhline{1.5pt}
-		\bf Label & \bf Train & \bf Dev & \bf Test & \bf All \\[0.5ex]
-		\hline
-		\hline
-		A         & 0.4655    & 0.4629  & 0.4665   & 0.4653  \\
-		\hline
-		B         & 0.9314    & 0.9303  & 0.9330   & 0.9315  \\
-		\hline
-		C         & 0.5280    & 0.5315  & 0.5304   & 0.5291  \\
-		\hline
-		D         & 0.6190    & 0.6225  & 0.6287   & 0.6215  \\
-		\hline
-		E         & 0.7840    & 0.7820  & 0.7858   & 0.7840  \\
-		\hline
-		F         & 0.1768    & 0.1796  & 0.1792   & 0.1777  \\
-		\hline
-		G         & 0.6738    & 0.6640  & 0.6734   & 0.6722  \\
-		\hline
-		H         & 0.1211    & 0.1270  & 0.1177   & 0.1214  \\
-		\hline
-		I         & 0.1116    & 0.1103  & 0.1141   & 0.1119  \\
-		\hline
-		J         & 0.1094    & 0.1109  & 0.1143   & 0.1106  \\
-		\hline
-		L         & 0.1506    & 0.1460  & 0.1515   & 0.1501  \\
-		\hline
-		M         & 0.4242    & 0.4339  & 0.4317   & 0.4273  \\
-		\hline
-		N         & 0.4552    & 0.4628  & 0.4650   & 0.4584  \\
-		\hline
-		Z         & 0.1610    & 0.1598  & 0.1618   & 0.1610  \\[1ex]
-		\Xhline{1.5pt}
-	\end{tabular}
-\end{table*}
+Each article has up to 13 root labels, with a median root label count of six (see Figure 2). The
+article abstracts are an average of 222 tokens long (see Figure 3).
+
+\begin{figure*}
+	[!htb]
+	\includegraphics[width=\textwidth]{labels_per_sample.png}
+	\captionof{figure}{Number of Labels per Abstract}
+	\label{fig:label_per_sample}
+\end{figure*}
+
+\begin{figure*}
+	[!htb]
+	\includegraphics[width=\textwidth]{text_lengths.png}
+	\captionof{figure}{Distribution of Abstract Lengths}
+	\label{fig:text_len}
+\end{figure*}
 
 \section{Methods}
 
-\emph{Describe the models/methods you have used including any baselines.}
+We use BioBERT---a specialized language model based on the dmis-lab/biobert-base-cased-v1.2---as a
+starting point. While regular BERT learns from general texts such as Wikipedia, BioBERT trains on
+vast biomedical data like PubMed summaries and PMC papers - so it understands medical meaning
+better. Instead of "and," it relies on connections like "while" or "whereas." It handles split-up
+words (limited to 128 pieces per summary) via 12 layered transformers. Rather than stacking ideas
+with "plus," it builds step by step. From the last processing stage, the [CLS] marker's combined
+signal feeds into a straight-line classifier that outputs scores across 14 units. Training adjusts
+weights using BCEWithLogitsLoss - not only efficient but also suited for cases when one document
+fits several MeSH labels at once. Each prediction passes through its own sigmoid function
+separately; therefore, overlapping tags are possible without conflict.
 
-We use BioBERT - a specialized language model based on the dmis-lab/biobert-base-cased-v1.2 starting point. While regular BERT learns from general texts such as Wikipedia, BioBERT trains on vast biomedical data like PubMed summaries and PMC papers - so it understands medical meaning better. Instead of "and," it relies on connections like "while" or "whereas." It handles split-up words (limited to 128 pieces per summary) via 12 layered transformers. Rather than stacking ideas with "plus," it builds step by step. From the last processing stage, the [CLS] marker’s combined signal feeds into a straight-line classifier that outputs scores across 14 units. Training adjusts weights using BCEWithLogitsLoss - not only efficient but also suited for cases when one document fits several MeSH labels at once. Each prediction passes through its own sigmoid function separately; therefore, overlapping tags are possible without conflict. Below are the baseline models that we use to measure the performance of BERT against.
+The performance of the fine-tuned BERT model was measured against three baseline models which were
+trained as follows.
 
-The RNN model handles word order by applying a Bi-LSTM setup. First, an embedding step converts split text into 256-element vectors. Then, these representations enter a Bi-LSTM block containing 128 memory cells. Instead of one direction only, processing occurs left-to-right and right-to-left to grasp full-sentence meaning. Afterward, outputs from both flows merge before entering a dense layer. That last component computes unnormalized scores directly. During inference, logits become probabilities using a Sigmoid activation. With a 0.3 cutoff, multi-label outputs turn into binary results.
+The logistic regression model serves as a basic neural starting point while performing effectively
+like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 100 dimensions by
+default, this component converts word IDs into compact vector forms. Rather than tracking sequence
+position, it computes the average of these embedded values throughout the full text entry. As a
+result, one consolidated mean vector emerges, capturing the overall meaning of the abstract. This
+average form feeds straight into a linear layer, then passes through a Sigmoid function. The
+approach estimates each label's likelihood separately, yet maintains fast response times.
 
-The Logistic Regression model serves as a basic neural starting point while performing effectively like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 100 dimensions by default, this component converts word IDs into compact vector forms. Rather than tracking sequence position, it computes the average of these embedded values throughout the full text entry. As a result, one consolidated mean vector emerges, capturing the overall meaning of the abstract. This average form feeds straight into a linear layer, then passes through a Sigmoid function. The approach estimates each label’s likelihood separately, yet maintains fast response times.
+The CNN approach detects local word sequences and meaningful phrases in text, no matter where they
+appear. Instead of focusing on exact positions, it processes embedded inputs using a 1D conv layer
+with a broad window---size 25---and moves forward by steps of 10 to capture distinct signals from
+the abstract. Following this step, global max pooling selects the strongest activation per filter
+over the full input span. Then, these selected outputs pass through a Sigmoid function so that
+multiple labels can be predicted at once.
 
-The CNN approach detects local word sequences and meaningful phrases in text, no matter where they appear. Instead of focusing on exact positions, it processes embedded inputs using a 1D conv layer with a broad window - size 25 - and moves forward by steps of 10 to capture distinct signals from the abstract. Following this step, global max pooling selects the strongest activation per filter over the full input span. Then, these selected outputs pass through a Sigmoid function so that multiple labels can be predicted at once.
-
+The RNN model handles word order by applying a Bi-LSTM setup. First, an embedding step converts
+split text into 256-element vectors. Then, these representations enter a Bi-LSTM block containing
+128 memory cells. Instead of one direction only, processing occurs left-to-right and right-to-left
+to grasp full-sentence meaning. Afterward, outputs from both flows merge before entering a dense
+layer. That last component computes unnormalized scores directly. During inference, logits become
+probabilities using a Sigmoid activation. With a 0.3 cutoff, multi-label outputs turn into binary
+results.
 
 \section{Experiments}
 
-Describe your experiments. How were the models trained, which hyperparameters,
-training and inference approaches, etc..
+All of the baseline models were trained over 25 epochs, using an initial learning rate of 0.001
+with Adam optimization.
 
-\subsection{Results}
+At the end of each epoch, the micro F1, macro F1, weighted-average F1, exact match ratio, and
+Hamming loss were calculated. Micro F1 calculates the F1 score using precision and recall over all
+of the labels at once, while the macro F1 calculates the F1 for each label and returns the average
+across the labels. Similarly to macro F1, weighted-average F1 calculates the F1 for each label and
+returns the weighted average. The exact match ratio measures how many predictions exactly matched
+every label, and Hamming loss measures how many labels were predicted incorrectly across all
+labels.Higher F1 scores and exact match ratios indicate better performance, and lower Hamming loss
+indicates better performance. Together, these five metrics were used to measure the performance of
+each of the models.
 
-Report your results using tables and plots as appropriate.
-
-\begin{figure*}[t]
+\begin{figure*}[!htb]
 	\centering
-	\begin{subfigure}{0.45\textwidth}
+	\begin{subfigure}{0.49\textwidth}
 		\includegraphics[width=\textwidth]{macro_f1.png}
 		\captionof{figure}{Macro F1}
 		\label{fig:macro_f1}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.45\textwidth}
+	\begin{subfigure}{0.49\textwidth}
 		\includegraphics[width=\textwidth]{micro_f1.png}
 		\captionof{figure}{Micro F1}
 		\label{fig:micro_f1}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.45\textwidth}
+	\begin{subfigure}{0.49\textwidth}
 		\includegraphics[width=\textwidth]{weighted_f1.png}
 		\captionof{figure}{Weighted F1}
 		\label{fig:weighted_f1}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.45\textwidth}
+	\begin{subfigure}{0.49\textwidth}
 		\includegraphics[width=\textwidth]{exact_match_ratio.png}
 		\captionof{figure}{Exact Match Ratio}
 		\label{fig:exact_match}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.45\textwidth}
+	\begin{subfigure}{0.49\textwidth}
 		\includegraphics[width=\textwidth]{hamming_loss.png}
 		\captionof{figure}{Hamming Loss}
 		\label{fig:hamming_loss}
@@ -262,10 +265,23 @@ Report your results using tables and plots as appropriate.
 	\label{fig:perf_metrics}
 \end{figure*}
 
+\subsection{Results}
+
+The CNN model had by far the worst performance, with lower F1 scores, lower exact match ratios, and
+higher Hamming loss.
+
+The RNN model performed best of the three baseline models. It had the highest macro and
+weighted-average F1 scores of the three baseline models over all 25 epochs, and performed best
+with regard to micro F1, exact match ratio, and Hamming loss for most of training.
+
+Although linear regression had worse performance than RNN across all five metrics for the first
+several epochs of training, the model using linear regression had the marginally better performance
+with regard to micro F1, exact match ratio, and Hamming loss past 20 epochs of training.
+
 \section{Conclusions}
 
 Present your discussion/conclusions.
 
-\bibliography{custom,anthology}
-\bibliographystyle{acl_natbib}
+% \bibliography{custom,anthology}
+% \bibliographystyle{acl_natbib}
 \end{document}

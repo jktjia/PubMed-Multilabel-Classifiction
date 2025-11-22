@@ -3,7 +3,7 @@ import time
 
 from evaluate_model import print_eval
 from utils import processed_labels, read_examples
-from models import TrivialMultilabelClassifier, train_LR
+from models import TrivialMultilabelClassifier, train_LR, train_CNN
 
 
 def _parse_args():
@@ -19,7 +19,7 @@ def _parse_args():
         "--model",
         type=str,
         default="TRIVIAL",
-        help="model to run (TRIVIAL, LR, or CNN)",
+        help="model to run (TRIVIAL, LR, CNN, or RNN)",
     )
     parser.add_argument(
         "--learning_rate", type=float, default=0.001, help="learning rate"
@@ -31,7 +31,7 @@ def _parse_args():
     parser.add_argument(
         "--dataset",
         type=str,
-        default="SMALL",
+        default="FULL",
         help="dataset size for training (FULL, MED, or SMALL)",
     )
     args = parser.parse_args()
@@ -73,17 +73,17 @@ if __name__ == "__main__":
             plot_loss=True,
             output_epoch_metrics=True,
         )
-    # elif args.model == "CNN":
-    #     model = train_CNN(
-    #         args,
-    #         train_exs,
-    #         dev_exs,
-    #         num_labels=len(processed_labels),
-    #         vocab=vocab,
-    #         embedding_layer=embedding_layer,
-    #         plot_loss=True,
-    #         output_epoch_metrics=True,
-    #     )
+    elif args.model == "CNN":
+        model = train_CNN(
+            args,
+            train_exs,
+            dev_exs,
+            num_labels=len(processed_labels),
+            vocab=vocab,
+            embedding_layer=embedding_layer,
+            plot_loss=True,
+            output_epoch_metrics=True,
+        )
     else:
         model = TrivialMultilabelClassifier(num_labels=len(processed_labels))
 
