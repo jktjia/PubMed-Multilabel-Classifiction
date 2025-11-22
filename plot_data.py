@@ -89,7 +89,7 @@ def _read_performance(model_paths: dict[str, str]):
                 data = data * 25
             df = pd.DataFrame(data)
             df["Model"] = model
-            df["epoch"] = df.index
+            df["epoch"] = df.index + 1
             df = df.reindex()
             perf_data = pd.concat([perf_data, df])
     return perf_data

@@ -179,21 +179,21 @@ article abstracts are an average of 222 tokens long (see Figure 3).
 \section{Methods}
 
 We use BioBERT---a specialized language model based on the dmis-lab/biobert-base-cased-v1.2---as a
-starting point. While regular BERT learns from general texts such as Wikipedia, BioBERT trains on
-vast biomedical data like PubMed summaries and PMC papers - so it understands medical meaning
-better. Instead of "and," it relies on connections like "while" or "whereas." It handles split-up
-words (limited to 128 pieces per summary) via 12 layered transformers. Rather than stacking ideas
-with "plus," it builds step by step. From the last processing stage, the [CLS] marker's combined
-signal feeds into a straight-line classifier that outputs scores across 14 units. Training adjusts
-weights using BCEWithLogitsLoss - not only efficient but also suited for cases when one document
-fits several MeSH labels at once. Each prediction passes through its own sigmoid function
-separately; therefore, overlapping tags are possible without conflict.
+starting point and fine-tuned the model. While regular BERT learns from general texts such as
+Wikipedia, BioBERT trains on vast biomedical data like PubMed summaries and PMC papers, so it
+understands medical meaning better. Instead of "and," it relies on connections like "while" or
+"whereas." It handles split-up words (limited to 128 pieces per summary) via 12 layered transformers.
+Rather than stacking ideas with "plus," it builds step by step. From the last processing stage,
+the [CLS] marker's combined signal feeds into a straight-line classifier that outputs scores across
+14 units. Training adjusts weights using BCEWithLogitsLoss - not only efficient but also suited for
+cases when one document fits several MeSH labels at once. Each prediction passes through its own
+sigmoid function separately; therefore, overlapping tags are possible without conflict.
 
 The performance of the fine-tuned BERT model was measured against three baseline models which were
 trained as follows.
 
 The logistic regression model serves as a basic neural starting point while performing effectively
-like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 100 dimensions by 
+like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 100 dimensions by
 default, this component converts word IDs into compact vector forms. Rather than tracking sequence
 position, it computes the average of these embedded values throughout the full text entry. As a result,
 one consolidated mean vector emerges, capturing the overall meaning of the abstract. This average form
@@ -202,9 +202,9 @@ label's likelihood separately, yet maintains fast response times.
 
 The CNN approach detects local word sequences and meaningful phrases in text, no matter where they
 appear. Instead of focusing on exact positions, it processes embedded inputs using a 1D conv layer
-with a broad window size 50 and moves forward by steps of 20 to capture distinct signals from the 
-abstract. Following this step, global max pooling selects the strongest activation per filter over 
-the full input span. Then, these selected outputs use BCEWithLogitsLoss for training so that multiple 
+with a broad window size 50 and moves forward by steps of 20 to capture distinct signals from the
+abstract. Following this step, global max pooling selects the strongest activation per filter over
+the full input span. Then, these selected outputs use BCEWithLogitsLoss for training so that multiple
 labels can be predicted at once.
 
 The RNN model handles word order by applying a Bi-LSTM setup. First, an embedding step converts
@@ -212,7 +212,7 @@ split text into 256-element vectors. Then, these representations enter a Bi-LSTM
 128 memory cells. Instead of one direction only, processing occurs left-to-right and right-to-left
 to grasp full-sentence meaning. Afterward, outputs from both flows merge before entering a dense
 layer. That last component computes unnormalized scores directly. During inference, logits become
-probabilities using a Sigmoid activation. With a 0.3 cutoff, multi-label outputs turn into binary
+probabilities using a sigmoid activation. With a 0.3 cutoff, multi-label outputs turn into binary
 results.
 
 \section{Experiments}
@@ -226,7 +226,7 @@ of the labels at once, while the macro F1 calculates the F1 for each label and r
 across the labels. Similarly to macro F1, weighted-average F1 calculates the F1 for each label and
 returns the weighted average. The exact match ratio measures how many predictions exactly matched
 every label, and Hamming loss measures how many labels were predicted incorrectly across all
-labels.Higher F1 scores and exact match ratios indicate better performance, and lower Hamming loss
+labels. Higher F1 scores and exact match ratios indicate better performance, and lower Hamming loss
 indicates better performance. Together, these five metrics were used to measure the performance of
 each of the models.
 
@@ -267,16 +267,17 @@ each of the models.
 
 \subsection{Results}
 
-The CNN model had by far the worst performance, with lower F1 scores, lower exact match ratios, and
-higher Hamming loss.
-
 The RNN model performed best of the three baseline models. It had the highest macro and
 weighted-average F1 scores of the three baseline models over all 25 epochs, and performed best
 with regard to micro F1, exact match ratio, and Hamming loss for most of training.
 
 Although linear regression had worse performance than RNN across all five metrics for the first
 several epochs of training, the model using linear regression had the marginally better performance
-with regard to micro F1, exact match ratio, and Hamming loss past 20 epochs of training.
+with regard to micro F1, exact match ratio, and Hamming loss past 15 epochs of training.
+
+The CNN model had by far the worst performance, with lower F1 scores, lower exact match ratios, and
+higher Hamming loss for the majority of training. CNN only performed better than logistic regression
+for the first two epochs, and never performed better than RNN for any evaluation metric.
 
 \section{Conclusions}
 
