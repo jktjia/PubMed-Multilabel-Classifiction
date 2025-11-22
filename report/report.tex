@@ -178,16 +178,7 @@ article abstracts are an average of 222 tokens long (see Figure 3).
 
 \section{Methods}
 
-We use BioBERT---a specialized language model based on the dmis-lab/biobert-base-cased-v1.2---as a
-starting point and fine-tuned the model. While regular BERT learns from general texts such as
-Wikipedia, BioBERT trains on vast biomedical data like PubMed summaries and PMC papers, so it
-understands medical meaning better. Instead of "and," it relies on connections like "while" or
-"whereas." It handles split-up words (limited to 128 pieces per summary) via 12 layered transformers.
-Rather than stacking ideas with "plus," it builds step by step. From the last processing stage,
-the [CLS] marker's combined signal feeds into a straight-line classifier that outputs scores across
-14 units. Training adjusts weights using BCEWithLogitsLoss - not only efficient but also suited for
-cases when one document fits several MeSH labels at once. Each prediction passes through its own
-sigmoid function separately; therefore, overlapping tags are possible without conflict.
+We adjusted the BioBERT model (biobert-base-cased-v1.2) to assign medical summaries to up to 14 MeSH groups that may overlap; input texts were split into tokens while limiting total sequence length to 128 units. Instead of stacking multiple layers, a single linear module was connected to the model's final output - transforming hidden states into 14 separate prediction values. Since articles might fit more than one label at once, outputs used individual sigmoid functions per node, avoiding Softmax which assumes exclusive classes. This setup allowed parallel probability estimates across topics. Training relied on BCEWithLogitsLoss - a unified method combining sigmoids and binary loss - for better computational reliability during optimization. We adjusted the model’s settings using AdamW at a learning rate of 2e-5, training for 25 epochs with batches of 16. At prediction time, a fixed cutoff of 0.5 was used - categories surpassing it were linked to the text.
 
 The performance of the fine-tuned BERT model was measured against three baseline models which were
 trained as follows.
