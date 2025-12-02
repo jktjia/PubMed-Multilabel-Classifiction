@@ -1,14 +1,13 @@
 import json
-import math
-import random
 from typing import List
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
+from torch.utils.data import DataLoader
 
 from evaluate_model import evaluate
-from utils import Indexer
+from utils import Indexer, create_dataset
 
 default_embed_size = 256
 default_hidden_size = 128
@@ -161,6 +160,7 @@ def train_NNClassifier(
     args,
     train_exs,
     dev_exs,
+    test_exs,
     num_labels: int,
     vocab: Indexer,
     model: nn.Module,
@@ -192,46 +192,19 @@ def train_NNClassifier(
     optimizer = optim.Adam(model.parameters(), lr=initial_learning_rate)
     loss_fn = nn.BCEWithLogitsLoss()
 
-    train_exs_indices = [
-        (torch.tensor([vocab.index_of(word) for word in ex[0]]), ex[1])
-        for ex in train_exs
-    ]
-    dev_exs_indices = [
-        (
-            torch.tensor([vocab.index_of(word) for word in ex[0]]).int(),
-            torch.tensor(ex[1]).float(),
-        )
-        for ex in dev_exs
-    ]
-    ex_idxs = [i for i in range(0, len(train_exs))]
+    train_ds = create_dataset(train_exs[0], train_exs[1], vocab)
+    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
+    dev_ds = create_dataset(dev_exs[0], dev_exs[1], vocab)
+    dev_loader = DataLoader(dev_ds)
+    # ex_idxs = [i for i in range(0, len(train_exs))]
     train_loss = []
     dev_loss = []
-    dev_metrics = []
+    test_metrics = []
     for epoch in range(0, num_epochs):
         model.train()
-        random.shuffle(ex_idxs)
+        # random.shuffle(ex_idxs)
         total_loss = 0.0
-        for batch in range(math.ceil(len(ex_idxs) / batch_size)):
-            exs = [
-                train_exs_indices[idx]
-                for idx in ex_idxs[batch_size * batch : batch_size * (batch + 1)]
-            ]
-            max_len = max(len(t[0]) for t in exs)
-            if min_length:
-                max_len = max(max_len, min_length)
-            x = torch.stack(
-                [
-                    torch.nn.functional.pad(
-                        ex[0],
-                        (0, max_len - len(ex[0])),
-                        mode="constant",
-                        value=vocab.index_of("<PAD>"),
-                    )
-                    for ex in exs
-                ]
-            ).int()
-            y = torch.tensor([ex[1] for ex in exs]).float()
-
+        for x, y in train_loader:
             probs = model.forward(x)
 
             model.zero_grad()
@@ -243,25 +216,18 @@ def train_NNClassifier(
             loss.backward()
             optimizer.step()
             # print("Epoch %i, batch %i loss: %f" % (epoch, batch, loss))
-        print("Epoch %i loss: %f" % (epoch, total_loss / len(train_exs)))
-        train_loss += [total_loss / len(train_exs)]
+        print("Epoch %i loss: %f" % (epoch, total_loss / len(train_exs[0])))
+        train_loss += [total_loss / len(train_exs[0])]
 
         model.eval()
         total_loss = 0
         with torch.no_grad():
-            for x, y in dev_exs_indices:
-                if min_length and len(x) < min_length:
-                    x = torch.nn.functional.pad(
-                        x,
-                        (0, min_length - len(x)),
-                        mode="constant",
-                        value=vocab.index_of("<PAD>"),
-                    )
+            for x, y in dev_loader:
                 output = model.forward(x)
                 loss = loss_fn(output, y)
                 total_loss += loss.item()
-            dev_loss += [total_loss / len(dev_exs)]
-        dev_metrics += [evaluate(classifier=classifier, exs=dev_exs)]
+            dev_loss += [total_loss / len(dev_exs[0])]
+        test_metrics += [evaluate(classifier=classifier, exs=test_exs)]
 
     if loss_plot:
         plt.plot(train_loss, label="Train Loss")
@@ -274,7 +240,7 @@ def train_NNClassifier(
 
     if epoch_metrics:
         with open(epoch_metrics, "w") as outfile:
-            json.dump(dev_metrics, outfile)
+            json.dump(test_metrics, outfile)
 
     return classifier
 
@@ -283,6 +249,7 @@ def train_LR(
     args,
     train_exs,
     dev_exs,
+    test_exs,
     num_labels: int,
     vocab: Indexer,
     embedding_layer: nn.Embedding | None = None,
@@ -316,6 +283,7 @@ def train_LR(
         args,
         train_exs,
         dev_exs,
+        test_exs,
         num_labels,
         vocab,
         model,
@@ -328,6 +296,7 @@ def train_CNN(
     args,
     train_exs,
     dev_exs,
+    test_exs,
     num_labels: int,
     vocab: Indexer,
     embedding_layer: nn.Embedding | None = None,
@@ -367,6 +336,7 @@ def train_CNN(
         args,
         train_exs,
         dev_exs,
+        test_exs,
         num_labels,
         vocab,
         model,

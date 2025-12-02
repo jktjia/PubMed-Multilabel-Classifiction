@@ -2,6 +2,8 @@ import pandas as pd
 from nltk.lm import Vocabulary
 from nltk.tokenize import word_tokenize
 import nltk
+import torch
+from torch.utils.data import TensorDataset
 
 nltk.download("punkt")
 
@@ -72,28 +74,22 @@ class Indexer(object):
         return self.objs_to_ints[object]
 
 
-def read_examples(path, ignore_stopwords: bool | None = None):
+def create_vocab(path, ignore_stopwords: bool | None = None):
     """
-    Reads in a csv of data and parses it into lists of tokens and labels and creates a vocabulary from the examples
+    Reads in a csv of data and creates a vocabulary from the examples
 
     Args:
         path (str): path to csv of examples
         ignore_stopwords (bool | None): whether or not to exclude stopwords from the vocabulary
 
     Returns:
-        List[Tuple[List[str], List[int]]]: list of examples parsed as into a list of tokens and a list of labels
         Indexer: indexer of vocabulary of abstracts in the examples
     """
     df = pd.read_csv(path)
-    df = df[processed_labels + ["abstractText"]]
-    dicts = df.to_dict("records")
-    exs = []
+    abstracts = [a for a in df["abstractText"]]
     vocabulary = Vocabulary()
-    for d in dicts:
-        labels = [0] * len(processed_labels)
-        for i, y in enumerate(processed_labels):
-            labels[i] = d[y]
-        words = word_tokenize(text=d["abstractText"], language="english")
+    for d in abstracts:
+        words = word_tokenize(text=d, language="english")
         vocab_words = [w for w in words]
         if ignore_stopwords:
             vocab_words = [
@@ -102,12 +98,59 @@ def read_examples(path, ignore_stopwords: bool | None = None):
                 if w not in nltk.corpus.stopwords.words("english")
             ]
         vocabulary.update(vocab_words)
-        exs += [(words, labels)]
     vocab = Indexer()
     vocab.add_and_get_index("<PAD>")
     for word in vocabulary:
         vocab.add_and_get_index(word)
-    return exs, vocab
+    return vocab
+
+
+def read_examples(path, vocab: Indexer):
+    """
+    Reads in a csv of data and parses it into a tensor dataset
+
+    Args:
+        path (str): path to csv of examples
+        vocab (Indexer): indexer of available vocabulary
+
+    Returns:
+        TensorDataset: dataset of the root labels and tokenized abstract text
+    """
+    df = pd.read_csv(path)
+    df = df[processed_labels + ["abstractText"]]
+    dicts = df.to_dict("records")
+    xs = []
+    ys = []
+    for d in dicts:
+        labels = [0] * len(processed_labels)
+        for i, y in enumerate(processed_labels):
+            labels[i] = d[y]
+
+        words = word_tokenize(text=d["abstractText"], language="english")
+        # indices = [vocab.index_of(word) for word in words]
+        xs += [words]
+        ys += [labels]
+
+    # max_len = max(len(x) for x in xs)
+    # xs = [x + [vocab.index_of("<PAD>")] * (max_len - len(x)) for x in xs]
+
+    # return TensorDataset(
+    #     torch.tensor(xs, dtype=torch.int),
+    #     torch.tensor(ys, dtype=torch.float),
+    # )
+    return xs, ys
+
+
+def create_dataset(tokens, labels, vocab: Indexer):
+    xs = [[vocab.index_of(word) for word in words] for words in tokens]
+
+    max_len = max(len(x) for x in xs)
+    xs = [x + [vocab.index_of("<PAD>")] * (max_len - len(x)) for x in xs]
+
+    return TensorDataset(
+        torch.tensor(xs, dtype=torch.int),
+        torch.tensor(labels, dtype=torch.float),
+    )
 
 
 processed_labels = [

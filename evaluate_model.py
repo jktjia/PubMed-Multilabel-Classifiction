@@ -18,9 +18,9 @@ def evaluate(classifier, exs):
         (float, float, float, float, float): micro, macro, and weighted average F1, exact match ratio, and hamming loss
     """
     return _calculate_eval(
-        [ex[1] for ex in exs],
-        classifier.predict_all([ex[0] for ex in exs]),
-        len(exs[0][1]),
+        exs[1],
+        classifier.predict_all(exs[0]),
+        len(exs[1][0]),
     )
 
 
