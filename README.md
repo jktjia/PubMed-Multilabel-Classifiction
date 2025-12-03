@@ -13,3 +13,7 @@ python multilabel_classifier.py [--model MODEL] [--learning_rate LEARNING_RATE] 
 ```
 
 Currently, the available models are TRIVIAL (trivial classifier that assigns every label as false), LR (logistic regression), and BERT (BioBert). Bert runner is for demo-ing in model-class format - for actual run BERT_Colab/BERT_Colab_run.ipynb (>2 hrs train time on A100)
+
+## Results
+BERT_Colab/bert_metrics_25epochs.json - Loss, Micro/Macro F1, Weighted F1.. for full dataset 
+BERT_Colab/bert_metrics_25epochs_small.json - Loss, Micro/Macro F1, Weighted F1.. for small dataset 
