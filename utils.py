@@ -51,6 +51,23 @@ def read_examples(path):
     return exs
 
 
+def read_abstract_texts(path):
+    """
+    Reads abstract texts directly from CSV file for BERT training
+    
+    Args:
+        path (str): path to csv of examples
+        
+    Returns:
+        List[str]: list of abstract texts
+    """
+    df = pd.read_csv(path)
+    texts = df["abstractText"].tolist()
+    # Handle NaN/None values by converting to empty strings
+    texts = ["" if pd.isna(text) or text is None else str(text) for text in texts]
+    return texts
+
+
 def create_vocab(
     exs: List[MultilabelExample], include_stopwords: bool | None = None
 ) -> Vocabulary:

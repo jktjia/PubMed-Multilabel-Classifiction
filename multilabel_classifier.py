@@ -2,7 +2,7 @@ import argparse
 import time
 
 from evaluate_model import evaluate
-from models import train_LR, TrivialMultilabelClassifier
+from models import train_LR, train_BERT, TrivialMultilabelClassifier
 from utils import processed_labels, read_examples
 
 
@@ -16,7 +16,7 @@ def _parse_args():
     """
     parser = argparse.ArgumentParser(description="multilabel_classifier.py")
     parser.add_argument(
-        "--model", type=str, default="TRIVIAL", help="model to run (TRIVIAL or LR)"
+        "--model", type=str, default="TRIVIAL", help="model to run (TRIVIAL, LR, or BERT)"
     )
     parser.add_argument(
         "--learning_rate", type=float, default=0.001, help="learning rate"
@@ -41,6 +41,18 @@ if __name__ == "__main__":
     start_time = time.time()
     if args.model == "LR":
         model = train_LR(args, train_exs, dev_exs, num_labels=len(processed_labels))
+    elif args.model == "BERT":
+        print("\n=====READ=====\n")
+        print("Training BERT model in model-class format (not in notebook format) with 50 train and 20 dev examples for demonstration purposes.")
+        print("For actual training+testing, we ran the BERT notebook on Colab with full dataset (>2 hrs train time).\n\n")
+        train_exs = train_exs[:50]
+        dev_exs = dev_exs[:20]
+        model = train_BERT(
+            args,
+            train_exs,
+            dev_exs,
+            num_labels=len(processed_labels)
+        )
     else:
         model = TrivialMultilabelClassifier(num_labels=len(processed_labels))
 
