@@ -117,6 +117,37 @@ class CNN(nn.Module):
         return self.l(max)
 
 
+class RNN(nn.Module):
+    def __init__(
+        self,
+        num_labels: int,
+        hidden_d: int,
+        vocab: Indexer,
+        embedding_layer: nn.Embedding | None = None,
+    ):
+        super().__init__()
+        self.emb = (
+            embedding_layer
+            if embedding_layer
+            else nn.Embedding(
+                len(vocab), default_embed_size, padding_idx=vocab.index_of("<PAD>")
+            )
+        )
+        self.lstm = nn.LSTM(
+            embedding_layer.embedding_dim if embedding_layer else default_embed_size,
+            hidden_d,
+            batch_first=True,
+            bidirectional=True,
+        )
+        self.fc = nn.Linear(hidden_d * 2, num_labels)
+
+    def forward(self, x):
+        embedded = self.emb(x)
+        _, (h, _) = self.lstm(embedded)
+        hidden = torch.cat((h[-2], h[-1]), dim=1)
+        return self.fc(hidden)
+
+
 class NNMultilabelClassifier(MultilabelClassifier):
     """
     Logistic regression multilabel classifier
@@ -320,8 +351,8 @@ def train_CNN(
         NNMultilabelClassifier: trained CNN multilabel classifier
     """
 
-    kernel_size = 50
-    stride = 20
+    kernel_size = 64
+    stride = 16
 
     model = CNN(
         num_labels=num_labels,
@@ -343,4 +374,52 @@ def train_CNN(
         "plots/cnn_loss.png" if plot_loss else None,
         "outputs/cnn_output.json" if output_epoch_metrics else None,
         min_length=kernel_size,
+    )
+
+
+def train_RNN(
+    args,
+    train_exs,
+    dev_exs,
+    test_exs,
+    num_labels: int,
+    vocab: Indexer,
+    embedding_layer: nn.Embedding | None = None,
+    plot_loss: bool | None = None,
+    output_epoch_metrics: bool | None = None,
+) -> NNMultilabelClassifier:
+    """
+    Trains a ==r== neural network regression multilabel classifier on the given training examples
+
+    Args:
+        args (_type_): command-line args
+        train_exs (_type_): train examples
+        dev_exs (_type_): dev examples
+        num_labels (int): number of labels
+        vocab (Indexer): an indexer of the vocabulary in the examples
+        embedding_layer (nn.Embedding | None, optional): optional pretrained embedding layer. Defaults to None.
+        plot_loss (bool | None, optional): whether the loss per epoch should be plotted. Defaults to None.
+        output_epoch_metrics (bool | None, optional): whether the performance metrics per epoch should be outputted. Defaults to None.
+
+    Returns:
+        NNMultilabelClassifier: trained RNN multilabel classifier
+    """
+
+    model = RNN(
+        num_labels=num_labels,
+        embedding_layer=embedding_layer,
+        hidden_d=default_hidden_size,
+        vocab=vocab,
+    )
+
+    return train_NNClassifier(
+        args,
+        train_exs,
+        dev_exs,
+        test_exs,
+        num_labels,
+        vocab,
+        model,
+        "plots/rnn_loss.png" if plot_loss else None,
+        "outputs/rnn_output.json" if output_epoch_metrics else None,
     )

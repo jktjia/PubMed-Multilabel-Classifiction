@@ -3,7 +3,7 @@ import time
 
 from evaluate_model import print_eval
 from utils import processed_labels, create_vocab, read_examples
-from models import TrivialMultilabelClassifier, train_LR, train_CNN
+from models import TrivialMultilabelClassifier, train_LR, train_CNN, train_RNN
 
 
 def _parse_args():
@@ -86,6 +86,18 @@ if __name__ == "__main__":
         )
     elif args.model == "CNN":
         model = train_CNN(
+            args,
+            train_exs,
+            dev_exs,
+            test_exs,
+            num_labels=len(processed_labels),
+            vocab=vocab,
+            embedding_layer=embedding_layer,
+            plot_loss=True,
+            output_epoch_metrics=True,
+        )
+    elif args.model == "RNN":
+        model = train_RNN(
             args,
             train_exs,
             dev_exs,

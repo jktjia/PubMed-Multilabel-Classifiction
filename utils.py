@@ -200,8 +200,10 @@ label_names = {
     "H": "Disciplines",
     "I": "Anthropology",
     "J": "Technology",
+    "K": "Humanities",
     "L": "Information",
     "M": "Named Groups",
     "N": "Health Care",
+    "V": "Publication",
     "Z": "Geographical",
 }
