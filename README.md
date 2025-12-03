@@ -12,4 +12,4 @@ To train and test the multilabel classifiers locally on small versions of the da
 python multilabel_classifier.py [--model MODEL] [--learning_rate LEARNING_RATE] [--num_epochs NUM_EPOCHS] [--batch_size BATCH_SIZE]
 ```
 
-Currently, the available models are TRIVIAL (trivial classifier that assigns every label as false) and LR (logistic regression).
+Currently, the available models are TRIVIAL (trivial classifier that assigns every label as false), LR (logistic regression), and BERT (BioBert). Bert runner is for demo-ing in model-class format - for actual run BERT_Colab/BERT_Colab_run.ipynb (>2 hrs train time on A100)
