@@ -140,6 +140,7 @@ if __name__ == "__main__":
             "LR": "outputs/lr_output.json",
             "CNN": "outputs/cnn_output.json",
             "RNN": "outputs/rnn_output.json",
+            "BERT": "BERT_Colab/bert_metrics_25epochs.json",
         }
         perf = _read_performance(model_paths=model_paths)
         print("\nRead in performance data for %i models" % len(model_paths))
