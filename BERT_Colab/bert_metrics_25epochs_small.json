@@ -1,0 +1,252 @@
+[
+    {
+        "epoch": 1,
+        "train_loss": 0.558085988163948,
+        "micro_f1": 0.758494031221304,
+        "macro_f1": 0.4507245046918877,
+        "weighted_f1": 0.6934336060388621,
+        "exact_match_ratio": 0.065,
+        "hamming_loss": 0.18785714285714286,
+        "output_str": "Micro F1: 0.758494; Macro F1: 0.450725; Weighted F1: 0.693434; Exact Match: 0.065000; Hamming Loss: 0.187857"
+    },
+    {
+        "epoch": 2,
+        "train_loss": 0.4342231649160385,
+        "micro_f1": 0.7880123402379903,
+        "macro_f1": 0.5240395236261187,
+        "weighted_f1": 0.7411370566859353,
+        "exact_match_ratio": 0.055,
+        "hamming_loss": 0.1717857142857143,
+        "output_str": "Micro F1: 0.788012; Macro F1: 0.524040; Weighted F1: 0.741137; Exact Match: 0.055000; Hamming Loss: 0.171786"
+    },
+    {
+        "epoch": 3,
+        "train_loss": 0.38593542158603666,
+        "micro_f1": 0.8057424854194706,
+        "macro_f1": 0.6107489111406387,
+        "weighted_f1": 0.7752479818249336,
+        "exact_match_ratio": 0.08,
+        "hamming_loss": 0.15464285714285714,
+        "output_str": "Micro F1: 0.805742; Macro F1: 0.610749; Weighted F1: 0.775248; Exact Match: 0.080000; Hamming Loss: 0.154643"
+    },
+    {
+        "epoch": 4,
+        "train_loss": 0.3553370589017868,
+        "micro_f1": 0.8149779735682819,
+        "macro_f1": 0.6136068111565073,
+        "weighted_f1": 0.7838346838225078,
+        "exact_match_ratio": 0.09,
+        "hamming_loss": 0.15,
+        "output_str": "Micro F1: 0.814978; Macro F1: 0.613607; Weighted F1: 0.783835; Exact Match: 0.090000; Hamming Loss: 0.150000"
+    },
+    {
+        "epoch": 5,
+        "train_loss": 0.32744369328022005,
+        "micro_f1": 0.810405643738977,
+        "macro_f1": 0.6227952372062323,
+        "weighted_f1": 0.7815882066660484,
+        "exact_match_ratio": 0.09,
+        "hamming_loss": 0.15357142857142858,
+        "output_str": "Micro F1: 0.810406; Macro F1: 0.622795; Weighted F1: 0.781588; Exact Match: 0.090000; Hamming Loss: 0.153571"
+    },
+    {
+        "epoch": 6,
+        "train_loss": 0.2996119564771652,
+        "micro_f1": 0.8149779735682819,
+        "macro_f1": 0.6322533108772582,
+        "weighted_f1": 0.7871837009633638,
+        "exact_match_ratio": 0.1,
+        "hamming_loss": 0.15,
+        "output_str": "Micro F1: 0.814978; Macro F1: 0.632253; Weighted F1: 0.787184; Exact Match: 0.100000; Hamming Loss: 0.150000"
+    },
+    {
+        "epoch": 7,
+        "train_loss": 0.27323863744735716,
+        "micro_f1": 0.8143607705779334,
+        "macro_f1": 0.6567003455660039,
+        "weighted_f1": 0.7949744200867875,
+        "exact_match_ratio": 0.095,
+        "hamming_loss": 0.15142857142857144,
+        "output_str": "Micro F1: 0.814361; Macro F1: 0.656700; Weighted F1: 0.794974; Exact Match: 0.095000; Hamming Loss: 0.151429"
+    },
+    {
+        "epoch": 8,
+        "train_loss": 0.25207162350416185,
+        "micro_f1": 0.8328187031318923,
+        "macro_f1": 0.6801829423076687,
+        "weighted_f1": 0.8134811923976545,
+        "exact_match_ratio": 0.115,
+        "hamming_loss": 0.13535714285714287,
+        "output_str": "Micro F1: 0.832819; Macro F1: 0.680183; Weighted F1: 0.813481; Exact Match: 0.115000; Hamming Loss: 0.135357"
+    },
+    {
+        "epoch": 9,
+        "train_loss": 0.22901543498039245,
+        "micro_f1": 0.8206926786497151,
+        "macro_f1": 0.6686110407735926,
+        "weighted_f1": 0.8023640876609467,
+        "exact_match_ratio": 0.105,
+        "hamming_loss": 0.14607142857142857,
+        "output_str": "Micro F1: 0.820693; Macro F1: 0.668611; Weighted F1: 0.802364; Exact Match: 0.105000; Hamming Loss: 0.146071"
+    },
+    {
+        "epoch": 10,
+        "train_loss": 0.20911796092987062,
+        "micro_f1": 0.8227628149435273,
+        "macro_f1": 0.6826251852480862,
+        "weighted_f1": 0.8082688898756764,
+        "exact_match_ratio": 0.095,
+        "hamming_loss": 0.1457142857142857,
+        "output_str": "Micro F1: 0.822763; Macro F1: 0.682625; Weighted F1: 0.808269; Exact Match: 0.095000; Hamming Loss: 0.145714"
+    },
+    {
+        "epoch": 11,
+        "train_loss": 0.18989837318658828,
+        "micro_f1": 0.8212728857890148,
+        "macro_f1": 0.6723668513683074,
+        "weighted_f1": 0.8038757132248002,
+        "exact_match_ratio": 0.085,
+        "hamming_loss": 0.14642857142857144,
+        "output_str": "Micro F1: 0.821273; Macro F1: 0.672367; Weighted F1: 0.803876; Exact Match: 0.085000; Hamming Loss: 0.146429"
+    },
+    {
+        "epoch": 12,
+        "train_loss": 0.17315848112106325,
+        "micro_f1": 0.8263736263736263,
+        "macro_f1": 0.6850884147227226,
+        "weighted_f1": 0.8110368372734118,
+        "exact_match_ratio": 0.11,
+        "hamming_loss": 0.14107142857142857,
+        "output_str": "Micro F1: 0.826374; Macro F1: 0.685088; Weighted F1: 0.811037; Exact Match: 0.110000; Hamming Loss: 0.141071"
+    },
+    {
+        "epoch": 13,
+        "train_loss": 0.15495408147573472,
+        "micro_f1": 0.8224219084296106,
+        "macro_f1": 0.6764897175629997,
+        "weighted_f1": 0.8063726566132532,
+        "exact_match_ratio": 0.095,
+        "hamming_loss": 0.14821428571428572,
+        "output_str": "Micro F1: 0.822422; Macro F1: 0.676490; Weighted F1: 0.806373; Exact Match: 0.095000; Hamming Loss: 0.148214"
+    },
+    {
+        "epoch": 14,
+        "train_loss": 0.1423333902657032,
+        "micro_f1": 0.8228571428571428,
+        "macro_f1": 0.6714149192269169,
+        "weighted_f1": 0.8066001143379481,
+        "exact_match_ratio": 0.1,
+        "hamming_loss": 0.14392857142857143,
+        "output_str": "Micro F1: 0.822857; Macro F1: 0.671415; Weighted F1: 0.806600; Exact Match: 0.100000; Hamming Loss: 0.143929"
+    },
+    {
+        "epoch": 15,
+        "train_loss": 0.12900293990969658,
+        "micro_f1": 0.8233754906236371,
+        "macro_f1": 0.6675042191941257,
+        "weighted_f1": 0.8048060318382432,
+        "exact_match_ratio": 0.105,
+        "hamming_loss": 0.14464285714285716,
+        "output_str": "Micro F1: 0.823375; Macro F1: 0.667504; Weighted F1: 0.804806; Exact Match: 0.105000; Hamming Loss: 0.144643"
+    },
+    {
+        "epoch": 16,
+        "train_loss": 0.11754937440156937,
+        "micro_f1": 0.8270152505446623,
+        "macro_f1": 0.694163154960797,
+        "weighted_f1": 0.8139993072286914,
+        "exact_match_ratio": 0.11,
+        "hamming_loss": 0.1417857142857143,
+        "output_str": "Micro F1: 0.827015; Macro F1: 0.694163; Weighted F1: 0.813999; Exact Match: 0.110000; Hamming Loss: 0.141786"
+    },
+    {
+        "epoch": 17,
+        "train_loss": 0.10749975308775901,
+        "micro_f1": 0.8253142609449502,
+        "macro_f1": 0.6716168221207822,
+        "weighted_f1": 0.8075607749339218,
+        "exact_match_ratio": 0.12,
+        "hamming_loss": 0.14392857142857143,
+        "output_str": "Micro F1: 0.825314; Macro F1: 0.671617; Weighted F1: 0.807561; Exact Match: 0.120000; Hamming Loss: 0.143929"
+    },
+    {
+        "epoch": 18,
+        "train_loss": 0.0982691177725792,
+        "micro_f1": 0.826539462272333,
+        "macro_f1": 0.6797856485466871,
+        "weighted_f1": 0.8103182581151894,
+        "exact_match_ratio": 0.1,
+        "hamming_loss": 0.14285714285714285,
+        "output_str": "Micro F1: 0.826539; Macro F1: 0.679786; Weighted F1: 0.810318; Exact Match: 0.100000; Hamming Loss: 0.142857"
+    },
+    {
+        "epoch": 19,
+        "train_loss": 0.09004083961248398,
+        "micro_f1": 0.8277056277056277,
+        "macro_f1": 0.6872652875425269,
+        "weighted_f1": 0.8132887193636512,
+        "exact_match_ratio": 0.135,
+        "hamming_loss": 0.14214285714285715,
+        "output_str": "Micro F1: 0.827706; Macro F1: 0.687265; Weighted F1: 0.813289; Exact Match: 0.135000; Hamming Loss: 0.142143"
+    },
+    {
+        "epoch": 20,
+        "train_loss": 0.08249675452709199,
+        "micro_f1": 0.8311461067366579,
+        "macro_f1": 0.6793300900983166,
+        "weighted_f1": 0.813004170155813,
+        "exact_match_ratio": 0.125,
+        "hamming_loss": 0.13785714285714284,
+        "output_str": "Micro F1: 0.831146; Macro F1: 0.679330; Weighted F1: 0.813004; Exact Match: 0.125000; Hamming Loss: 0.137857"
+    },
+    {
+        "epoch": 21,
+        "train_loss": 0.07642081618309021,
+        "micro_f1": 0.824661128115435,
+        "macro_f1": 0.6714229145977131,
+        "weighted_f1": 0.8069668433536108,
+        "exact_match_ratio": 0.11,
+        "hamming_loss": 0.1432142857142857,
+        "output_str": "Micro F1: 0.824661; Macro F1: 0.671423; Weighted F1: 0.806967; Exact Match: 0.110000; Hamming Loss: 0.143214"
+    },
+    {
+        "epoch": 22,
+        "train_loss": 0.0705581995099783,
+        "micro_f1": 0.8216919739696312,
+        "macro_f1": 0.6687843843262602,
+        "weighted_f1": 0.8046696595514539,
+        "exact_match_ratio": 0.11,
+        "hamming_loss": 0.1467857142857143,
+        "output_str": "Micro F1: 0.821692; Macro F1: 0.668784; Weighted F1: 0.804670; Exact Match: 0.110000; Hamming Loss: 0.146786"
+    },
+    {
+        "epoch": 23,
+        "train_loss": 0.06696225807070733,
+        "micro_f1": 0.8237347294938918,
+        "macro_f1": 0.6759552305378383,
+        "weighted_f1": 0.8085450949006225,
+        "exact_match_ratio": 0.11,
+        "hamming_loss": 0.1442857142857143,
+        "output_str": "Micro F1: 0.823735; Macro F1: 0.675955; Weighted F1: 0.808545; Exact Match: 0.110000; Hamming Loss: 0.144286"
+    },
+    {
+        "epoch": 24,
+        "train_loss": 0.061350789815187455,
+        "micro_f1": 0.8261437908496732,
+        "macro_f1": 0.683891104480147,
+        "weighted_f1": 0.8113507991291145,
+        "exact_match_ratio": 0.095,
+        "hamming_loss": 0.1425,
+        "output_str": "Micro F1: 0.826144; Macro F1: 0.683891; Weighted F1: 0.811351; Exact Match: 0.095000; Hamming Loss: 0.142500"
+    },
+    {
+        "epoch": 25,
+        "train_loss": 0.057517586722970006,
+        "micro_f1": 0.8265971316818774,
+        "macro_f1": 0.684323957855462,
+        "weighted_f1": 0.8114794205699283,
+        "exact_match_ratio": 0.105,
+        "hamming_loss": 0.1425,
+        "output_str": "Micro F1: 0.826597; Macro F1: 0.684324; Weighted F1: 0.811479; Exact Match: 0.105000; Hamming Loss: 0.142500"
+    }
+]
