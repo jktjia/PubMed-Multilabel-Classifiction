@@ -3,7 +3,13 @@ import time
 
 from evaluate_model import print_eval
 from utils import processed_labels, create_vocab, read_examples
-from models import TrivialMultilabelClassifier, train_LR, train_CNN, train_RNN
+from models import (
+    TrivialMultilabelClassifier,
+    train_LR,
+    train_CNN,
+    train_RNN,
+    train_BERT,
+)
 
 
 def _parse_args():
@@ -19,7 +25,7 @@ def _parse_args():
         "--model",
         type=str,
         default="TRIVIAL",
-        help="model to run (TRIVIAL, LR, CNN, or RNN)",
+        help="model to run (TRIVIAL, LR, CNN, RNN, 0or BERT)",
     )
     parser.add_argument(
         "--learning_rate", type=float, default=0.001, help="learning rate"
@@ -108,6 +114,17 @@ if __name__ == "__main__":
             plot_loss=True,
             output_epoch_metrics=True,
         )
+    elif args.model == "BERT":
+        print("\n=====READ=====\n")
+        print(
+            "Training BERT model in model-class format (not in notebook format) with 50 train and 20 dev examples for demonstration purposes."
+        )
+        print(
+            "For actual training+testing, we ran the BERT notebook on Colab with full dataset (>2 hrs train time).\n\n"
+        )
+        train_exs = train_exs[:50]
+        dev_exs = dev_exs[:20]
+        model = train_BERT(args, train_exs, dev_exs, num_labels=len(processed_labels))
     else:
         model = TrivialMultilabelClassifier(num_labels=len(processed_labels))
 
