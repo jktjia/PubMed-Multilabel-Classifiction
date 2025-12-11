@@ -68,7 +68,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-	This is a template for your project report. This template is used for submissions to the ACL conference. You can see the original files here (\url{https://github.com/acl-org/acl-style-files/tree/master/latex}) which have additional instructions on how to use this template.
+	In this paper, we discuss our project on multi-label classification of PubMed articles into root labels using their . We approach the biomedical classification task with BERT (BioBERT) and compare it against three baseline models: RNN, CNN, and Logistic Regression.
 \end{abstract}
 
 \section{Introduction}
@@ -88,6 +88,8 @@ and (2) to compare its performance against more conventional models, including l
 CNNs, and RNNs. By doing so, we hope to demonstrate the advantages of transformer-based models in
 capturing contextual information and label correlations in biomedical texts, ultimately providing a
 tool for organizing and analyzing the PubMed corpus.
+
+In our classification task, we encounter challenges such as fixing class imbalance, dealing with specialized language,  and optimizing training time / compute. Different evaluation metrics and source data resizing became part of the solution to some of these problems. Through this report, we detail our data processing, model architectures, experimental setup, and evaluation results, along with an analysis of each approach.
 
 \section{Background/Related Work}
 
@@ -179,13 +181,13 @@ article abstracts are an average of 222 tokens long (see Figure 3).
 \section{Methods}
 
 We adjusted the BioBERT model (biobert-base-cased-v1.2) to assign medical summaries to up to 14 MeSH
-groups that may overlap; input texts were split into tokens while limiting total sequence length to
-128 units. Instead of stacking multiple layers, a single linear module was connected to the model's
-final output, transforming hidden states into 14 separate prediction values. Since articles might
+groups that may overlap. Texts were processed using BioBERT’s cased WordPiece tokenizer, which inserts special [CLS] and [SEP] tokens and pads or truncates sequences to a fixed length of 128 tokens. 
+Instead of stacking multiple layers, a single linear module was connected to the model's
+final output, transforming hidden states into 14 separate prediction values. This meant the final hidden state of just the [CLS] token was passed through a single linear layer that produced 14 independent logits. Since articles might
 fit more than one label at once, outputs used individual sigmoid functions per node, avoiding softmax
 which assumes exclusive classes. This setup allowed parallel probability estimates across topics.
 Training relied on BCEWithLogitsLoss---a unified method combining sigmoids and binary loss---for
-better computational reliability during optimization. At prediction time, a fixed cutoff of 0.5 was
+better computational reliability during optimization. The entire BioBERT encoder and classification head were fine-tuned jointly using the AdamW optimizer. At prediction time, a fixed cutoff of 0.5 was
 used; categories surpassing the cutoff were linked to the text.
 
 The performance of the fine-tuned BERT model was measured against three baseline models which were
@@ -216,8 +218,8 @@ results.
 
 \section{Experiments}
 
-All of the baseline models were trained over 25 epochs, using an initial learning rate of 0.001
-with Adam optimization.
+All of the baseline models were trained over 25 epochs, using an initial learning rate of 0.001 with Adam optimization, on both reduced-size and full-size versions of the dataset.
+
 
 At the end of each epoch, the micro F1, macro F1, weighted-average F1, exact match ratio, and
 Hamming loss were calculated. Micro F1 calculates the F1 score using precision and recall over all
@@ -265,6 +267,8 @@ each of the models.
 \end{figure*}
 
 \subsection{Results}
+
+Looking at the results, the BioBERT model leads baseline models in performance on the classification task. Micro and Macro F1 are higher for BioBERT compared to the baseline models, which shows that even with class imbalance BioBERT beats out the baseline. The amount by which BioBERT beats all three baselines is more for the smaller dataset, with performance at around 0.7-0.8, and this shows the difference between the BERT fine-tuning vs. training from start in the baseline models. This difference across reduced and full data continues across to Exact match ratio and hamming loss: BioBERT has lower hamming loss and higher exact match ratio than baseline. 
 
 The RNN model performed best of the three baseline models. It had the highest macro and
 weighted-average F1 scores of the three baseline models over all 25 epochs, and performed best
