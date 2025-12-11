@@ -91,9 +91,14 @@ tool for organizing and analyzing the PubMed corpus.
 
 In our classification task, we encounter challenges such as fixing class imbalance, dealing with specialized language,  and optimizing training time / compute. Different evaluation metrics and source data resizing became part of the solution to some of these problems. Through this report, we detail our data processing, model architectures, experimental setup, and evaluation results, along with an analysis of each approach.
 
-\section{Background/Related Work}
+\section{Background and Related Work}
+The rapid rise in biomedical publications makes it hard for scientists to find useful data. To help, the National Library of Medicine (NLM) tags PubMed entries using Medical Subject Headings (MeSH), a structured list grouping medical ideas in levels. Yet, tagging by hand takes much effort, money, and time - making expansion tough \cite{mao2017}. For this reason, automatic Multi-Label Text Classification (MLTC) has become vital in bio-NLP tasks. In contrast to typical single-label sorting, MLTC links several tags to one document, since most health papers cover various subjects at once - for example Disorders, Substances, or Treatment Methods \cite{tsoumakas2007}.
 
-Describe any background or related work
+Before Transformers became common, models for text analysis often used CNNs instead of RNNs. While both handled sequences differently, they formed the base for early deep learning in this area. CNNs started in image processing but later got used for text tasks after Kim’s work \cite{kim2014}, using small sliding filters to spot short meaningful word groups. Although good at finding fixed-length phrases, they usually fail to link distant parts of longer texts because their focus area is narrow. RNNs plus Bi-LSTMs: recurrent systems like Bidirectional Long Short-Term Memory (Bi-LSTM) emerged to handle text step by step. Because they analyze data from left to right - then reverse - they grasp sequence patterns along with word positioning better than fixed bag-of-words methods \cite{hochreiter1997}. Still, such architectures run into processing delays thanks to their linear flow; also, gradients tend to weaken across extended chains.
+
+Devlin et al. \cite{devlin2019} introduced BERT along with this new structure, changing how NLP works. Instead of using RNNs, these models rely on self-attention to handle input at once - enabling better understanding of context and links between labels.
+
+Although standard BERT works well on common tasks, it struggles with biomedical texts because of differences in terminology - like drug names or clinical terms. Instead of using general data, Lee et al. \cite{lee2020} trained BioBERT on specialized sources such as PubMed and PMC, keeping the original structure. This version performs better in spotting entities, finding links between them, also answering medical questions. Here, we use biobert-base-cased-v1.2 to identify specific patterns tied to MeSH labels.
 
 \section{Data}
 
@@ -288,4 +293,40 @@ Present your discussion/conclusions.
 
 % \bibliography{custom,anthology}
 % \bibliographystyle{acl_natbib}
+\section{References}
+
+\begin{thebibliography}{9}
+
+\bibitem{mao2017}
+Mao, Y., \& Lu, Z. (2017).
+Automated MeSH indexing of biomedical literature using contextualized word representations.
+\textit{BMC Bioinformatics}, 18(1), 1--14.
+
+\bibitem{tsoumakas2007}
+Tsoumakas, G., \& Katakis, I. (2007).
+Multi-label classification: An overview.
+\textit{International Journal of Data Warehousing and Mining (IJDWM)}, 3(3), 1--13.
+
+\bibitem{kim2014}
+Kim, Y. (2014).
+Convolutional Neural Networks for Sentence Classification.
+\textit{Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)}.
+
+\bibitem{hochreiter1997}
+Hochreiter, S., \& Schmidhuber, J. (1997).
+Long Short-Term Memory.
+\textit{Neural Computation}, 9(8), 1735--1780.
+
+\bibitem{devlin2019}
+Devlin, J., Chang, M. W., Lee, K., \& Toutanova, K. (2019).
+BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.
+\textit{Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL)}.
+
+\bibitem{lee2020}
+Lee, J., Yoon, W., Kim, S., et al. (2020).
+BioBERT: a pre-trained biomedical language representation model for biomedical text mining.
+\textit{Bioinformatics}, 36(4), 1234--1240.
+
+\end{thebibliography}
+
 \end{document}
