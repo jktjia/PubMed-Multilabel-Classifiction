@@ -68,7 +68,9 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-	In this paper, we discuss our project on multi-label classification of PubMed articles into root labels using their . We approach the biomedical classification task with BERT (BioBERT) and compare it against three baseline models: RNN, CNN, and Logistic Regression.
+	In this paper, we discuss our project on multi-label classification of PubMed articles into
+	root labels using NLP. We approach the biomedical classification task with BERT (BioBERT)
+	and compare it against three baseline models: RNN, CNN, and Logistic Regression.
 \end{abstract}
 
 \section{Introduction}
@@ -89,10 +91,20 @@ CNNs, and RNNs. By doing so, we hope to demonstrate the advantages of transforme
 capturing contextual information and label correlations in biomedical texts, ultimately providing a
 tool for organizing and analyzing the PubMed corpus.
 
-In our classification task, we encounter challenges such as fixing class imbalance, dealing with specialized language,  and optimizing training time / compute. Different evaluation metrics and source data resizing became part of the solution to some of these problems. Through this report, we detail our data processing, model architectures, experimental setup, and evaluation results, along with an analysis of each approach.
+In our classification task, we encounter challenges such as fixing class imbalance, dealing with
+specialized language,  and optimizing training time / compute. Different evaluation metrics and
+source data resizing became part of the solution to some of these problems. Through this report, we
+detail our data processing, model architectures, experimental setup, and evaluation results, along
+with an analysis of each approach.
 
 \section{Background and Related Work}
-The rapid rise in biomedical publications makes it hard for scientists to find useful data. To help, the National Library of Medicine (NLM) tags PubMed entries using Medical Subject Headings (MeSH), a structured list grouping medical ideas in levels. Yet, tagging by hand takes much effort, money, and time - making expansion tough \cite{mao2017}. For this reason, automatic Multi-Label Text Classification (MLTC) has become vital in bio-NLP tasks. In contrast to typical single-label sorting, MLTC links several tags to one document, since most health papers cover various subjects at once - for example Disorders, Substances, or Treatment Methods \cite{tsoumakas2007}.
+The rapid rise in biomedical publications makes it hard for scientists to find useful data. To
+help, the National Library of Medicine (NLM) tags PubMed entries using Medical Subject Headings
+(MeSH), a structured list grouping medical ideas in levels. Yet, tagging by hand takes much effort,
+money, and time - making expansion tough \cite{mao2017}. For this reason, automatic Multi-Label
+Text Classification (MLTC) has become vital in bio-NLP tasks. In contrast to typical single-label
+sorting, MLTC links several tags to one document, since most health papers cover various subjects
+at once - for example Disorders, Substances, or Treatment Methods \cite{tsoumakas2007}.
 
 Before Transformers became common, models for text analysis often used CNNs instead of RNNs. While both handled sequences differently, they formed the base for early deep learning in this area. CNNs started in image processing but later got used for text tasks after Kim’s work \cite{kim2014}, using small sliding filters to spot short meaningful word groups. Although good at finding fixed-length phrases, they usually fail to link distant parts of longer texts because their focus area is narrow. RNNs plus Bi-LSTMs: recurrent systems like Bidirectional Long Short-Term Memory (Bi-LSTM) emerged to handle text step by step. Because they analyze data from left to right - then reverse - they grasp sequence patterns along with word positioning better than fixed bag-of-words methods \cite{hochreiter1997}. Still, such architectures run into processing delays thanks to their linear flow; also, gradients tend to weaken across extended chains.
 
@@ -186,7 +198,7 @@ article abstracts are an average of 222 tokens long (see Figure 3).
 \section{Methods}
 
 We adjusted the BioBERT model (biobert-base-cased-v1.2) to assign medical summaries to up to 14 MeSH
-groups that may overlap. Texts were processed using BioBERT’s cased WordPiece tokenizer, which inserts special [CLS] and [SEP] tokens and pads or truncates sequences to a fixed length of 128 tokens. 
+groups that may overlap. Texts were processed using BioBERT’s cased WordPiece tokenizer, which inserts special [CLS] and [SEP] tokens and pads or truncates sequences to a fixed length of 128 tokens.
 Instead of stacking multiple layers, a single linear module was connected to the model's
 final output, transforming hidden states into 14 separate prediction values. This meant the final hidden state of just the [CLS] token was passed through a single linear layer that produced 14 independent logits. Since articles might
 fit more than one label at once, outputs used individual sigmoid functions per node, avoiding softmax
@@ -223,8 +235,42 @@ results.
 
 \section{Experiments}
 
-All of the baseline models were trained over 25 epochs, using an initial learning rate of 0.001 with Adam optimization, on both reduced-size and full-size versions of the dataset.
+\begin{figure*}[!htb]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/macro_f1.png}
+		\captionof{figure}{Macro F1}
+		\label{fig:macro_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/micro_f1.png}
+		\captionof{figure}{Micro F1}
+		\label{fig:micro_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/weighted_f1.png}
+		\captionof{figure}{Weighted F1}
+		\label{fig:weighted_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/exact_match_ratio.png}
+		\captionof{figure}{Exact Match Ratio}
+		\label{fig:exact_match}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/hamming_loss.png}
+		\captionof{figure}{Hamming Loss}
+		\label{fig:hamming_loss}
+	\end{subfigure}
+	\captionof{figure}{Performance Metrics by Epoch}
+	\label{fig:perf_metrics}
+\end{figure*}
 
+All of the baseline models were trained over 25 epochs, using an initial learning rate of 0.001 with Adam optimization, on both reduced-size and full-size versions of the dataset.
 
 At the end of each epoch, the micro F1, macro F1, weighted-average F1, exact match ratio, and
 Hamming loss were calculated. Micro F1 calculates the F1 score using precision and recall over all
@@ -236,44 +282,9 @@ labels. Higher F1 scores and exact match ratios indicate better performance, and
 indicates better performance. Together, these five metrics were used to measure the performance of
 each of the models.
 
-\begin{figure*}[!htb]
-	\centering
-	\begin{subfigure}{0.49\textwidth}
-		\includegraphics[width=\textwidth]{macro_f1.png}
-		\captionof{figure}{Macro F1}
-		\label{fig:macro_f1}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49\textwidth}
-		\includegraphics[width=\textwidth]{micro_f1.png}
-		\captionof{figure}{Micro F1}
-		\label{fig:micro_f1}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49\textwidth}
-		\includegraphics[width=\textwidth]{weighted_f1.png}
-		\captionof{figure}{Weighted F1}
-		\label{fig:weighted_f1}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49\textwidth}
-		\includegraphics[width=\textwidth]{exact_match_ratio.png}
-		\captionof{figure}{Exact Match Ratio}
-		\label{fig:exact_match}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49\textwidth}
-		\includegraphics[width=\textwidth]{hamming_loss.png}
-		\captionof{figure}{Hamming Loss}
-		\label{fig:hamming_loss}
-	\end{subfigure}
-	\captionof{figure}{Performance Metrics by Epoch}
-	\label{fig:perf_metrics}
-\end{figure*}
-
 \subsection{Results}
 
-Looking at the results, the BioBERT model leads baseline models in performance on the classification task. Micro and Macro F1 are higher for BioBERT compared to the baseline models, which shows that even with class imbalance BioBERT beats out the baseline. The amount by which BioBERT beats all three baselines is more for the smaller dataset, with performance at around 0.7-0.8, and this shows the difference between the BERT fine-tuning vs. training from start in the baseline models. This difference across reduced and full data continues across to Exact match ratio and hamming loss: BioBERT has lower hamming loss and higher exact match ratio than baseline. 
+Looking at the results, the BioBERT model leads baseline models in performance on the classification task. Micro and Macro F1 are higher for BioBERT compared to the baseline models, which shows that even with class imbalance BioBERT beats out the baseline. The amount by which BioBERT beats all three baselines is more for the smaller dataset, with performance at around 0.7-0.8, and this shows the difference between the BERT fine-tuning vs. training from start in the baseline models. This difference across reduced and full data continues across to Exact match ratio and hamming loss: BioBERT has lower hamming loss and higher exact match ratio than baseline.
 
 The RNN model performed best of the three baseline models. It had the highest macro and
 weighted-average F1 scores of the three baseline models over all 25 epochs, and performed best
@@ -291,42 +302,7 @@ for the first two epochs, and never performed better than RNN for any evaluation
 
 Present your discussion/conclusions.
 
-% \bibliography{custom,anthology}
-% \bibliographystyle{acl_natbib}
-\section{References}
-
-\begin{thebibliography}{9}
-
-\bibitem{mao2017}
-Mao, Y., \& Lu, Z. (2017).
-Automated MeSH indexing of biomedical literature using contextualized word representations.
-\textit{BMC Bioinformatics}, 18(1), 1--14.
-
-\bibitem{tsoumakas2007}
-Tsoumakas, G., \& Katakis, I. (2007).
-Multi-label classification: An overview.
-\textit{International Journal of Data Warehousing and Mining (IJDWM)}, 3(3), 1--13.
-
-\bibitem{kim2014}
-Kim, Y. (2014).
-Convolutional Neural Networks for Sentence Classification.
-\textit{Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)}.
-
-\bibitem{hochreiter1997}
-Hochreiter, S., \& Schmidhuber, J. (1997).
-Long Short-Term Memory.
-\textit{Neural Computation}, 9(8), 1735--1780.
-
-\bibitem{devlin2019}
-Devlin, J., Chang, M. W., Lee, K., \& Toutanova, K. (2019).
-BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.
-\textit{Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL)}.
-
-\bibitem{lee2020}
-Lee, J., Yoon, W., Kim, S., et al. (2020).
-BioBERT: a pre-trained biomedical language representation model for biomedical text mining.
-\textit{Bioinformatics}, 36(4), 1234--1240.
-
-\end{thebibliography}
+\bibliography{custom,anthology}
+\bibliographystyle{acl_natbib}
 
 \end{document}

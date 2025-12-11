@@ -105,16 +105,16 @@ def create_vocab(path, ignore_stopwords: bool | None = None):
     return vocab
 
 
-def read_examples(path, vocab: Indexer):
+def read_examples(path: str):
     """
-    Reads in a csv of data and parses it into a tensor dataset
+    Reads in a csv of data and parses it into the abstract texts and root labels
 
     Args:
         path (str): path to csv of examples
-        vocab (Indexer): indexer of available vocabulary
 
     Returns:
-        TensorDataset: dataset of the root labels and tokenized abstract text
+        List[str]: list of the abstract texts
+        List[List[int]]: list of root labels
     """
     df = pd.read_csv(path)
     df = df[processed_labels + ["abstractText"]]
@@ -126,28 +126,18 @@ def read_examples(path, vocab: Indexer):
         for i, y in enumerate(processed_labels):
             labels[i] = d[y]
 
-        words = word_tokenize(text=d["abstractText"], language="english")
-        # indices = [vocab.index_of(word) for word in words]
-        xs += [words]
+        xs += [d["abstractText"]]
         ys += [labels]
-
-    # max_len = max(len(x) for x in xs)
-    # xs = [x + [vocab.index_of("<PAD>")] * (max_len - len(x)) for x in xs]
-
-    # return TensorDataset(
-    #     torch.tensor(xs, dtype=torch.int),
-    #     torch.tensor(ys, dtype=torch.float),
-    # )
     return xs, ys
 
-  
+
 def read_abstract_texts(path):
     """
     Reads abstract texts directly from CSV file for BERT training
-    
+
     Args:
         path (str): path to csv of examples
-        
+
     Returns:
         List[str]: list of abstract texts
     """

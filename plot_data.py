@@ -12,7 +12,8 @@ sns.set_theme(font_scale=1.25, rc={"text.usetex": True})
 plt.rc("text", usetex=True)
 plt.rc("font", family="serif")
 
-DEST_DIR = "plots"
+SIZE = "full"
+DEST_DIR = "plots/" + SIZE
 
 
 def _parse_args():
@@ -136,11 +137,10 @@ if __name__ == "__main__":
 
     if args.plots == "ALL" or args.plots == "PERF":
         model_paths = {
-            # "Trivial": "outputs/trivial_output.json",
-            "LR": "outputs/lr_output.json",
-            "CNN": "outputs/cnn_output.json",
-            "RNN": "outputs/rnn_output.json",
-            "BERT": "BERT_Colab/bert_metrics_25epochs.json",
+            "LR": f"outputs/{SIZE}/lr_output.json",
+            "CNN": f"outputs/{SIZE}/cnn_output.json",
+            "RNN": f"outputs/{SIZE}/rnn_output.json",
+            "BERT": f"outputs/{SIZE}/bert_output.json",
         }
         perf = _read_performance(model_paths=model_paths)
         print("\nRead in performance data for %i models" % len(model_paths))

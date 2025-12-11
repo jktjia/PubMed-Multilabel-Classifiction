@@ -6,14 +6,19 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 
 from evaluate_model import evaluate
-from transformers import BertForSequenceClassification, AutoTokenizer
+
+from transformers import BertForSequenceClassification, BertTokenizer
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from torch.nn import BCEWithLogitsLoss
 from tqdm import trange
-from utils import Indexer, create_dataset, read_abstract_texts
+from nltk.tokenize import word_tokenize
+from utils import Indexer, create_dataset
 
 default_embed_size = 256
 default_hidden_size = 128
+
+PLOT_DIR = "plots"
+OUTPUT_DIR = "outputs"
 
 
 class MultilabelClassifier(object):
@@ -151,9 +156,9 @@ class RNN(nn.Module):
         return self.fc(hidden)
 
 
-class NNMultilabelClassifier(MultilabelClassifier):
+class BaselineMultilabelClassifier(MultilabelClassifier):
     """
-    Logistic regression multilabel classifier
+    Baseline multilabel classifier
     """
 
     def __init__(self, num_labels: int, vocab: Indexer, module: nn.Module):
@@ -162,13 +167,15 @@ class NNMultilabelClassifier(MultilabelClassifier):
         self.module = module
         self.sigmoid = nn.Sigmoid()
 
-    def predict(self, ex_words: List[str]) -> int:
+    def predict(self, ex: str) -> int:
+        ex_words = word_tokenize(ex)
         x = torch.tensor([self.vocab.index_of(word) for word in ex_words]).int()
         probs = self.sigmoid(self.module.forward(x))
         prediction = (probs > 0.5).int()
         return prediction
 
-    def predict_all(self, all_ex_words: List[List[str]]) -> List[int]:
+    def predict_all(self, all_ex: List[str]) -> List[int]:
+        all_ex_words = [word_tokenize(ex) for ex in all_ex]
         indices = [
             torch.tensor([self.vocab.index_of(word) for word in ex])
             for ex in all_ex_words
@@ -190,18 +197,17 @@ class NNMultilabelClassifier(MultilabelClassifier):
         return prediction
 
 
-def train_NNClassifier(
+def train_BaselineClassifier(
     args,
     train_exs,
     dev_exs,
-    test_exs,
     num_labels: int,
     vocab: Indexer,
     model: nn.Module,
     loss_plot: str | None = None,
     epoch_metrics: str | None = None,
     min_length: int | None = None,
-) -> NNMultilabelClassifier:
+) -> BaselineMultilabelClassifier:
     """
     Trains a multilabel classifier based on a given model on the given training examples
 
@@ -216,27 +222,28 @@ def train_NNClassifier(
         output_epoch_metrics (bool | None, optional): whether the performance metrics per epoch should be outputted. Defaults to None.
 
     Returns:
-        NNMultilabelClassifier: trained multilabel classifier
+        BaselineMultilabelClassifier: trained multilabel classifier
     """
     num_epochs = args.num_epochs
     initial_learning_rate = args.learning_rate
     batch_size = args.batch_size
 
-    classifier = NNMultilabelClassifier(num_labels, vocab, module=model)
+    classifier = BaselineMultilabelClassifier(num_labels, vocab, module=model)
     optimizer = optim.Adam(model.parameters(), lr=initial_learning_rate)
     loss_fn = nn.BCEWithLogitsLoss()
 
-    train_ds = create_dataset(train_exs[0], train_exs[1], vocab)
+    train_words = [word_tokenize(ex) for ex in train_exs[0]]
+    train_ds = create_dataset(train_words, train_exs[1], vocab)
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
-    dev_ds = create_dataset(dev_exs[0], dev_exs[1], vocab)
+    dev_words = [word_tokenize(ex) for ex in dev_exs[0]]
+    dev_ds = create_dataset(dev_words, dev_exs[1], vocab)
     dev_loader = DataLoader(dev_ds)
-    # ex_idxs = [i for i in range(0, len(train_exs))]
+
     train_loss = []
     dev_loss = []
-    test_metrics = []
-    for epoch in range(0, num_epochs):
+    dev_metrics = []
+    for epoch in trange(num_epochs):
         model.train()
-        # random.shuffle(ex_idxs)
         total_loss = 0.0
         for x, y in train_loader:
             probs = model.forward(x)
@@ -249,9 +256,8 @@ def train_NNClassifier(
 
             loss.backward()
             optimizer.step()
-            # print("Epoch %i, batch %i loss: %f" % (epoch, batch, loss))
-        print("Epoch %i loss: %f" % (epoch, total_loss / len(train_exs[0])))
-        train_loss += [total_loss / len(train_exs[0])]
+        avg_train_loss = total_loss / len(train_exs[0])
+        train_loss += [avg_train_loss]
 
         model.eval()
         total_loss = 0
@@ -261,7 +267,12 @@ def train_NNClassifier(
                 loss = loss_fn(output, y)
                 total_loss += loss.item()
             dev_loss += [total_loss / len(dev_exs[0])]
-        test_metrics += [evaluate(classifier=classifier, exs=test_exs)]
+        metrics = evaluate(classifier=classifier, exs=dev_exs)
+        dev_metrics += [metrics]
+
+        print(
+            f"Epoch {epoch + 1}/{num_epochs} | Train Loss: {avg_train_loss:.4f} | Micro F1: {metrics['micro_f1']:.4f} | Exact Match: {metrics['exact_match_ratio']:.4f}"
+        )
 
     if loss_plot:
         plt.plot(train_loss, label="Train Loss")
@@ -274,7 +285,7 @@ def train_NNClassifier(
 
     if epoch_metrics:
         with open(epoch_metrics, "w") as outfile:
-            json.dump(test_metrics, outfile)
+            json.dump(dev_metrics, outfile)
 
     return classifier
 
@@ -283,13 +294,12 @@ def train_LR(
     args,
     train_exs,
     dev_exs,
-    test_exs,
     num_labels: int,
     vocab: Indexer,
     embedding_layer: nn.Embedding | None = None,
     plot_loss: bool | None = None,
     output_epoch_metrics: bool | None = None,
-) -> NNMultilabelClassifier:
+) -> BaselineMultilabelClassifier:
     """
     Trains a logistic regression multilabel classifier on the given training examples
 
@@ -313,16 +323,15 @@ def train_LR(
         embedding_layer,
     )
 
-    return train_NNClassifier(
+    return train_BaselineClassifier(
         args,
         train_exs,
         dev_exs,
-        test_exs,
         num_labels,
         vocab,
         model,
-        "plots/lr_loss.png" if plot_loss else None,
-        "outputs/lr_output.json" if output_epoch_metrics else None,
+        "%s/%s/lr_loss.png" % (PLOT_DIR, args.dataset.lower()) if plot_loss else None,
+        "%s/%s/lr_output.json" % (OUTPUT_DIR, args.dataset.lower()),
     )
 
 
@@ -330,13 +339,12 @@ def train_CNN(
     args,
     train_exs,
     dev_exs,
-    test_exs,
     num_labels: int,
     vocab: Indexer,
     embedding_layer: nn.Embedding | None = None,
     plot_loss: bool | None = None,
     output_epoch_metrics: bool | None = None,
-) -> NNMultilabelClassifier:
+) -> BaselineMultilabelClassifier:
     """
     Trains a convolutional neural network regression multilabel classifier on the given training examples
 
@@ -366,16 +374,15 @@ def train_CNN(
         vocab=vocab,
     )
 
-    return train_NNClassifier(
+    return train_BaselineClassifier(
         args,
         train_exs,
         dev_exs,
-        test_exs,
         num_labels,
         vocab,
         model,
-        "plots/cnn_loss.png" if plot_loss else None,
-        "outputs/cnn_output.json" if output_epoch_metrics else None,
+        "%s/%s/cnn_loss.png" % (PLOT_DIR, args.dataset.lower()) if plot_loss else None,
+        "%s/%s/cnn_output.json" % (OUTPUT_DIR, args.dataset.lower()),
         min_length=kernel_size,
     )
 
@@ -384,13 +391,12 @@ def train_RNN(
     args,
     train_exs,
     dev_exs,
-    test_exs,
     num_labels: int,
     vocab: Indexer,
     embedding_layer: nn.Embedding | None = None,
     plot_loss: bool | None = None,
     output_epoch_metrics: bool | None = None,
-) -> NNMultilabelClassifier:
+) -> BaselineMultilabelClassifier:
     """
     Trains a ==r== neural network regression multilabel classifier on the given training examples
 
@@ -415,16 +421,17 @@ def train_RNN(
         vocab=vocab,
     )
 
-    return train_NNClassifier(
+    return train_BaselineClassifier(
         args,
         train_exs,
         dev_exs,
-        test_exs,
         num_labels,
         vocab,
         model,
-        "plots/rnn_loss.png" if plot_loss else None,
-        "outputs/rnn_output.json" if output_epoch_metrics else None,
+        "%s/%s/rnn_loss.png" % (PLOT_DIR, args.dataset.lower()) if plot_loss else None,
+        "%s/%s/rnn_output.json" % (OUTPUT_DIR, args.dataset.lower())
+        if output_epoch_metrics
+        else None,
     )
 
 
@@ -446,42 +453,29 @@ class BERTMultilabelClassifier(MultilabelClassifier):
         self.model.to(self.device)
         self.model.eval()
 
-    def _words_to_text(self, ex_words: List[str]) -> str:
-        """Convert tokenized words back to text string for BERT"""
-        # Join words, handling punctuation spacing
-        text = " ".join(ex_words)
-        # Fix common spacing issues
-        import re
+    # def _words_to_text(self, ex_words: List[str]) -> str:
+    #     """Convert tokenized words back to text string for BERT"""
+    #     # Join words, handling punctuation spacing
+    #     text = " ".join(ex_words)
+    #     # Fix common spacing issues
+    #     import re
 
-        text = re.sub(r"\s+([.,!?;:])", r"\1", text)
-        text = re.sub(r'(["\'])\s+', r"\1", text)
-        return text
+    #     text = re.sub(r"\s+([.,!?;:])", r"\1", text)
+    #     text = re.sub(r'(["\'])\s+', r"\1", text)
+    #     return text
 
-    def predict(self, ex_words: List[str]) -> List[int]:
-        """
-        Makes a prediction on the given sentence
-
-        Args:
-            ex_words (List[str]): words to predict on
-
-        Returns:
-            List[int]: 0 or 1 for each label
-        """
-        text = self._words_to_text(ex_words)
-        return self.predict_from_text(text)
-
-    def predict_from_text(self, text: str) -> List[int]:
+    def predict(self, ex: str) -> List[int]:
         """
         Makes a prediction from raw text string
 
         Args:
-            text (str): raw text to predict on
+            ex (str): raw text to predict on
 
         Returns:
             List[int]: 0 or 1 for each label
         """
         encodings = self.tokenizer(
-            text,
+            ex,
             padding=True,
             truncation=True,
             max_length=self.max_length,
@@ -499,25 +493,12 @@ class BERTMultilabelClassifier(MultilabelClassifier):
 
         return predictions
 
-    def predict_all(self, all_ex_words: List[List[str]]) -> List[List[int]]:
-        """
-        Makes predictions for each sentence in a given list of sentences
-
-        Args:
-            all_ex_words (List[List[str]]): list of sentences to predict
-
-        Returns:
-            List[List[int]]: 0 or 1 for each label for each sentence
-        """
-        texts = [self._words_to_text(words) for words in all_ex_words]
-        return self.predict_all_from_texts(texts)
-
-    def predict_all_from_texts(self, texts: List[str]) -> List[List[int]]:
+    def predict_all(self, all_exs: List[str]) -> List[List[int]]:
         """
         Makes predictions from a list of raw text strings
 
         Args:
-            texts (List[str]): list of raw texts to predict on
+            all_exs (List[str]): list of raw texts to predict on
 
         Returns:
             List[List[int]]: 0 or 1 for each label for each text
@@ -525,8 +506,8 @@ class BERTMultilabelClassifier(MultilabelClassifier):
         predictions = []
         batch_size = 16  # Process in batches
 
-        for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i : i + batch_size]
+        for i in range(0, len(all_exs), batch_size):
+            batch_texts = all_exs[i : i + batch_size]
             encodings = self.tokenizer(
                 batch_texts,
                 padding=True,
@@ -553,8 +534,6 @@ def train_BERT(
     train_exs,
     dev_exs,
     num_labels: int,
-    train_csv_path: str | None = None,
-    dev_csv_path: str | None = None,
 ) -> BERTMultilabelClassifier:
     """
     Trains a BERT multilabel classifier on the given training examples
@@ -577,7 +556,13 @@ def train_BERT(
     num_epochs = args.num_epochs if args.num_epochs > 0 else 25
     learning_rate = args.learning_rate if args.learning_rate > 0 else 2e-5
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device(
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.mps.is_available()
+        else "cpu"
+    )
     print(f"Using device: {device}")
 
     # Load model and tokenizer
@@ -585,48 +570,16 @@ def train_BERT(
     model = BertForSequenceClassification.from_pretrained(
         model_name, num_labels=num_labels, use_safetensors=True
     )
-    tokenizer = AutoTokenizer.from_pretrained(model_name, do_lower_case=True)
+    tokenizer = BertTokenizer.from_pretrained(model_name, do_lower_case=True)
 
     model.to(device)
 
     # Extract texts and labels from examples
     # Try to read directly from CSV for better accuracy, otherwise reconstruct from words
     train_labels = train_exs[1]
+    train_texts = train_exs[0]
     dev_labels = dev_exs[1]
-
-    if train_csv_path:
-        try:
-            train_texts = read_abstract_texts(train_csv_path)
-            # Slice to match number of examples if needed
-            if len(train_texts) > len(train_exs):
-                train_texts = train_texts[: len(train_exs)]
-            print(f"Read {len(train_texts)} abstract texts from {train_csv_path}")
-        except Exception as e:
-            print(
-                f"Warning: Could not read from {train_csv_path}: {e}. Reconstructing from words."
-            )
-            train_texts = [" ".join(words) for words in train_exs[0]]
-    else:
-        train_texts = [" ".join(words) for words in train_exs[0]]
-
-    if dev_csv_path:
-        try:
-            dev_texts = read_abstract_texts(dev_csv_path)
-            # Slice to match number of examples if needed
-            if len(dev_texts) > len(dev_exs):
-                dev_texts = dev_texts[: len(dev_exs)]
-            print(f"Read {len(dev_texts)} abstract texts from {dev_csv_path}")
-        except Exception as e:
-            print(
-                f"Warning: Could not read from {dev_csv_path}: {e}. Reconstructing from words."
-            )
-            dev_texts = [" ".join(words) for words in dev_exs[0]]
-    else:
-        dev_texts = [" ".join(words) for words in dev_exs[0]]
-
-    # Ensure all texts are strings and not empty
-    train_texts = [str(text) if text is not None else "" for text in train_texts]
-    dev_texts = [str(text) if text is not None else "" for text in dev_texts]
+    dev_texts = dev_exs[0]
 
     # Validate lengths match
     if len(train_texts) != len(train_labels):
@@ -682,10 +635,15 @@ def train_BERT(
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
     loss_fn = BCEWithLogitsLoss()
 
+    classifier = BERTMultilabelClassifier(
+        model, tokenizer, num_labels, device, max_length
+    )
+
     # Training loop
     print(f"\nStarting training for {num_epochs} epochs...")
     print(f"Batch size: {batch_size}, Learning rate: {learning_rate}")
 
+    dev_metrics = []
     for epoch in trange(num_epochs, desc="Epoch"):
         # Training
         model.train()
@@ -720,6 +678,7 @@ def train_BERT(
 
                 all_preds.append(preds.cpu())
                 all_true_labels.append(b_labels.cpu())
+        dev_metrics += [evaluate(classifier=classifier, exs=dev_exs)]
 
         # Calculate metrics
         all_preds = torch.cat(all_preds).numpy()
@@ -738,7 +697,12 @@ def train_BERT(
             f"Epoch {epoch + 1}/{num_epochs} | Train Loss: {avg_train_loss:.4f} | Dev Accuracy: {accuracy:.4f}"
         )
 
+    with open(
+        "%s/%s/bert_output.json" % (OUTPUT_DIR, args.dataset.lower()), "w"
+    ) as outfile:
+        json.dump(dev_metrics, outfile)
+
     print("\nTraining completed!")
 
     # Return classifier wrapper
-    return BERTMultilabelClassifier(model, tokenizer, num_labels, device, max_length)
+    return classifier
