@@ -1,0 +1,352 @@
+% This must be in the first 5 lines to tell arXiv to use pdfLaTeX, which is strongly recommended.
+\pdfoutput=1
+% In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
+
+\documentclass[11pt]{article}
+
+% Remove the "review" option to generate the final version.
+\usepackage{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% Other packages
+\usepackage{makecell} 
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{cuted}
+\usepackage{subcaption}
+
+\graphicspath{ {../plots/} }
+
+
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{CS 6120: Comparing Models for Multilabel Classification of PubMed Article
+	Abstracts}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a seperate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{Nithish Bhat \and Ashish Thomas \and Jamie Tjia \\ Northeastern
+	University \\ Boston, MA, United States \\ \texttt{\{bhat.nithi, thomas.ash, tjia.j\}@northeastern.edu}
+	\\ }
+
+\begin{document}
+\maketitle
+\begin{abstract}
+	In this paper, we discuss our project on multi-label classification of PubMed articles into
+	root labels using NLP. We approach the biomedical classification task with BERT (BioBERT)
+	and compare it against three baseline models: RNN, CNN, and Logistic Regression.
+\end{abstract}
+
+\section{Introduction}
+
+The growth of biomedical literature has created a need for automated methods to organize and
+classify research articles effectively. Manually labeling articles with relevant Medical Subject
+Headings (MeSH) is labor-intensive and time-consuming, making automated multi-label classification
+a helpful tool for researchers and clinicians.
+
+This project aims to use a transformer-based language model, specifically BERT, to perform
+multi-label classification on biomedical research articles. Instead of traditional single-label
+classification, we use multi-label classification, as articles are typically associated with
+multiple MeSH tags.
+
+Our goals are: (1) to train and evaluate a BERT model for accurately predicting MeSH root labels
+and (2) to compare its performance against more conventional models, including logistic regression,
+CNNs, and RNNs. By doing so, we hope to demonstrate the advantages of transformer-based models in
+capturing contextual information and label correlations in biomedical texts, ultimately providing a
+tool for organizing and analyzing the PubMed corpus.
+
+In our classification task, we encounter challenges such as fixing class imbalance, dealing with
+specialized language,  and optimizing training time / compute. Different evaluation metrics and
+source data resizing became part of the solution to some of these problems. Through this report, we
+detail our data processing, model architectures, experimental setup, and evaluation results, along
+with an analysis of each approach.
+
+\section{Background and Related Work}
+
+The rapid rise in biomedical publications makes it hard for scientists to find useful data. To
+help, the National Library of Medicine (NLM) tags PubMed entries using Medical Subject Headings
+(MeSH), a structured list grouping medical ideas in levels. Yet, tagging by hand takes much effort,
+money, and time---making expansion tough \cite{mao2017}. For this reason, automatic Multi-Label
+Text Classification (MLTC) has become vital in bio-NLP tasks. In contrast to typical single-label
+sorting, MLTC links several tags to one document, since most health papers cover various subjects
+at once---for example Disorders, Substances, or Treatment Methods \cite{tsoumakas2007}.
+
+Before Transformers became common, models for text analysis often used CNNs instead of RNNs. While
+both handled sequences differently, they formed the base for early deep learning in this area.
+CNNs started in image processing but later got used for text tasks after Kim's work \cite{kim2014},
+using small sliding filters to spot short meaningful word groups. Although good at finding
+fixed-length phrases, they usually fail to link distant parts of longer texts because their focus
+area is narrow. RNNs plus Bi-LSTMs: recurrent systems like Bidirectional Long Short-Term Memory
+(Bi-LSTM) emerged to handle text step by step. Because they analyze data from left to right and
+from right to left, they grasp sequence patterns along with word positioning better than fixed
+bag-of-words methods \cite{hochreiter1997}. Still, such architectures run into processing delays
+thanks to their linear flow; also, gradients tend to weaken across extended chains.
+
+Devlin et al. \cite{devlin2019} introduced BERT along with this new structure, changing how NLP
+works. Instead of using RNNs, these models rely on self-attention to handle input at
+once---enabling better understanding of context and links between labels.
+
+Although standard BERT works well on common tasks, it struggles with biomedical texts because of
+differences in terminology - like drug names or clinical terms. Instead of using general data,
+Lee et al. \cite{lee2020} trained BioBERT on specialized sources such as PubMed and PMC, keeping
+the original structure. This version performs better in spotting entities, finding links between
+them, also answering medical questions. Here, we use biobert-base-cased-v1.2 to identify specific
+patterns tied to MeSH labels.
+
+\section{Data}
+
+\begin{figure*}
+	[!htb]
+	\centering
+	\includegraphics[width=\textwidth]{label_freq.png}
+	\captionof{figure}{Frequency of MeSH Root Labels}
+	\label{fig:label_freq}
+\end{figure*}
+
+The baseline and BERT models were all trained and tested on the dataset
+\href{https://www.kaggle.com/datasets/owaiskhan9654/pubmed-multilabel-text-classification}
+{PubMed MultiLabel Text Classification Dataset MeSH}. This dataset contains information on 50,000
+articles from PubMed, including each article's title, abstract, and Medical Subject Heading (MeSH)
+labels.
+
+MeSH labels are arranged into a nested hierarchy with 16 root labels (see Table 1). Two
+labels---Humanities [K] and Publication Characteristics [V]---have been excluded due to their
+infrequency in the available data. The 14 included labels each appear in at least ten percent of
+the sample articles (see Figure 1).
+
+\begin{table*}
+	[p]
+	\centering
+	\begin{tabular}{ c l }
+		\Xhline{1.5pt}
+		\bf Label & \bf Name                                                         \\[0.5ex]
+		\hline
+		\hline
+		A         & Anatomy                                                          \\
+		\hline
+		B         & Organisms                                                        \\
+		\hline
+		C         & Diseases                                                         \\
+		\hline
+		D         & Chemicals and Drugs                                              \\
+		\hline
+		E         & Analytical, Diagnostic and Therapeutic Techniques, and Equipment \\
+		\hline
+		F         & Psychiatry and Psychology                                        \\
+		\hline
+		G         & Phenomena and Processes                                          \\
+		\hline
+		H         & Disciplines and Occupations                                      \\
+		\hline
+		I         & Anthropology, Education, Sociology, and Social Phenomena         \\
+		\hline
+		J         & Technology, Industry, and Agriculture                            \\
+		\hline
+		K         & Humanities                                                       \\
+		\hline
+		L         & Information Science                                              \\
+		\hline
+		M         & Named Groups                                                     \\
+		\hline
+		N         & Health Care                                                      \\
+		\hline
+		V         & Publication Characteristics                                      \\
+		\hline
+		Z         & Geographicals                                                    \\[1ex]
+		\Xhline{1.5pt}
+	\end{tabular}
+	\captionof{table}{Full Label Names}
+	\label{tab:label_names}
+\end{table*}
+
+Each article has up to 13 root labels, with a median root label count of six (see Figure 2). The
+article abstracts are an average of 222 tokens long (see Figure 3).
+
+\begin{figure*}
+	[!htb]
+	\includegraphics[width=\textwidth]{labels_per_sample.png}
+	\captionof{figure}{Number of Labels per Abstract}
+	\label{fig:label_per_sample}
+\end{figure*}
+
+\begin{figure*}
+	[!htb]
+	\includegraphics[width=\textwidth]{text_lengths.png}
+	\captionof{figure}{Distribution of Abstract Lengths}
+	\label{fig:text_len}
+\end{figure*}
+
+\section{Methods}
+
+We adjusted the BioBERT model (biobert-base-cased-v1.2) to assign medical summaries to up to 14
+MeSH groups that may overlap. Texts were processed using BioBERT's cased WordPiece tokenizer,
+which inserts special [CLS] and [SEP] tokens and pads or truncates sequences to a fixed length of
+128 tokens. Instead of stacking multiple layers, a single linear module was connected to the
+model's final output, transforming hidden states into 14 separate prediction values. This meant the
+final hidden state of just the [CLS] token was passed through a single linear layer that produced
+14 independent logits. Since articles might fit more than one label at once, outputs used
+individual sigmoid functions per node, avoiding softmax which assumes exclusive classes. This setup
+allowed parallel probability estimates across topics. Training relied on BCEWithLogitsLoss---a
+unified method combining sigmoids and binary loss---for better computational reliability during
+optimization. The entire BioBERT encoder and classification head were fine-tuned jointly using the
+AdamW optimizer. At prediction time, a fixed cutoff of 0.5 was used; categories surpassing the
+cutoff were linked to the text.
+
+The performance of the fine-tuned BERT model was measured against three baseline models which were
+trained as follows.
+
+The logistic regression model serves as a basic neural starting point while performing effectively
+like a "Neural Bag-of-Words" system. Although it uses an embedding layer set to 256 dimensions by
+default, this component converts word IDs into compact vector forms. Rather than tracking sequence
+position, it computes the average of these embedded values throughout the full text entry. As a result,
+one consolidated mean vector emerges, capturing the overall meaning of the abstract. This average form
+feeds straight into a linear layer, then uses BCEWithLogitsLoss for training. The approach estimates each
+label's likelihood separately, yet maintains fast response times.
+
+The CNN approach detects local word sequences and meaningful phrases in text, no matter where they
+appear. Instead of focusing on exact positions, it processes embedded inputs with length 256 using a 1D
+convolutional layer with a window size of 50 and moves forward by steps of 20 to capture distinct signals
+from the abstract. Following this step, global max pooling selects the strongest activation per filter over
+the full input span. Then, these selected outputs use BCEWithLogitsLoss for training so that multiple
+labels can be predicted at once.
+
+The RNN model handles word order by applying a Bi-LSTM setup. First, an embedding step converts
+split text into 256 element vectors. Then, these representations enter a Bi-LSTM block containing
+128 memory cells. Instead of one direction only, processing occurs left-to-right and right-to-left
+to grasp full-sentence meaning. Afterward, outputs from both flows merge before entering a dense
+layer. That last component computes unnormalized scores directly. During inference, logits become
+probabilities using a sigmoid activation. With a set cutoff, multi-label outputs turn into binary
+results.
+
+\section{Experiments}
+
+\begin{figure*}[!htb]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/macro_f1.png}
+		\captionof{figure}{Macro F1}
+		\label{fig:macro_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/micro_f1.png}
+		\captionof{figure}{Micro F1}
+		\label{fig:micro_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/weighted_f1.png}
+		\captionof{figure}{Weighted F1}
+		\label{fig:weighted_f1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/exact_match_ratio.png}
+		\captionof{figure}{Exact Match Ratio}
+		\label{fig:exact_match}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{full/hamming_loss.png}
+		\captionof{figure}{Hamming Loss}
+		\label{fig:hamming_loss}
+	\end{subfigure}
+	\captionof{figure}{Performance Metrics by Epoch}
+	\label{fig:perf_metrics}
+\end{figure*}
+
+We used micro F1, macro F1, weighted-average F1, exact match ratio, and Hamming loss to evaluate
+the performance of each model. Micro F1 calculates the F1 score using precision and recall over
+all of the labels at once, while the macro F1 calculates the F1 for each label and returns the
+average across the labels. Similarly to macro F1, weighted-average F1 calculates the F1 for each
+label and returns the weighted average. The exact match ratio measures how many predictions exactly
+matched every label, and Hamming loss measures how many labels were predicted incorrectly across
+all labels. Higher F1 scores and exact match ratios indicate better performance, and lower Hamming
+loss indicates better performance.
+
+The learning rate for each model was determined with separate tests for each model on the dev
+dataset. All of the models were trained over 25 epochs, using an initial learning rate of 0.001 for
+the baselines and 0.0001 for the BERT model with Adam optimization, on both reduced-size and
+full-size versions of the dataset. At the end of each epoch, the evalutation metrics were calculated
+for on dev dataset to determine the ideal number of epochs for tests.
+
+\subsection{Results}
+
+Looking at the results, the BioBERT model leads baseline models in performance on the
+classification task. Micro and Macro F1 are higher for BioBERT compared to the baseline models,
+which shows that even with class imbalance BioBERT beats out the baseline. The amount by which
+BioBERT beats all three baselines is more for the smaller dataset, with performance at around
+0.7-0.8, and this shows the difference between the BERT fine-tuning vs. training from start in
+the baseline models. This difference across reduced and full data continues across to exact match
+ratio and Hamming loss: BioBERT has lower Hamming loss and higher exact match ratio than baseline.
+
+Although it is the most straightforward model, linear regression the best performance of the
+baseline models. Linear regression had worse performance than RNN with regard to F1 scores the
+first several epochs of training, the model using linear regression had better performance with
+regard to all metrics past 7 epochs of training.
+
+RNN had the best initial performance of the baseline models, but peaked in performance about 5
+epochs into training, allowing linear regression to surpass RNN.
+
+The CNN model had by far the worst performance, with lower F1 scores, lower exact match ratios, and
+higher Hamming loss for the majority of training. CNN only performed better than logistic regression
+for the first one or two epochs, and never performed better than RNN for any evaluation metric.
+
+\section{Conclusions}
+
+From this project, it is clear BioBERT performs better than the baseline models. This
+illustrates the importance of properly pretraining  embeddings, particularly when the subject
+matter requires expert knowledge to understand, as with  biomedical research. Even with large
+amounts of training data and several epochs of training, the baseline models approach the
+performance of BioBERT but do not surpass it.
+
+The next steps for this work would be to assess the performance of BERT-based models for the more
+complicated task of predicting the full nested MeSH labels of PubMed articles. In particular,
+evaluating the performance of a more naive BERT model against both hierarchical multilabel
+classification models---which model the nested hierarchy of the labels when making
+predictions---and a model that uses BERT embeddings alongside hierarchical multilabel classification
+model \cite{zhang2025}. Another way of expanding this project would be to compare BioBERT, a
+word2vec model trained on biomedical text, and similar models trained on less specific datasets, in
+order to assess the importance of pretraining embeddings on text which uses the highly specialized
+vocabulary used in biomedical research papers.
+
+\bibliography{custom,anthology}
+\bibliographystyle{acl_natbib}
+
+\end{document}

@@ -1,0 +1,202 @@
+[
+  {
+    "macro_f1": 0.4161029105508308,
+    "micro_f1": 0.7133047210300429,
+    "weighted_f1": 0.6553059730142267,
+    "exact_match_ratio": 0.015,
+    "hamming_loss": 0.23857142857142857,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.713305;\nMacro F1 (F1 averaged over each label): 0.416103;\nWeighted F1 (F1 weighted by label occurrences): 0.655306;\nExact Match: 3 / 200 = 0.015000;\nHamming Loss: 668 / 2800 = 0.238571;"
+  },
+  {
+    "macro_f1": 0.4165600807933572,
+    "micro_f1": 0.724956063268893,
+    "weighted_f1": 0.6587315406061095,
+    "exact_match_ratio": 0.045,
+    "hamming_loss": 0.22357142857142856,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.724956;\nMacro F1 (F1 averaged over each label): 0.416560;\nWeighted F1 (F1 weighted by label occurrences): 0.658732;\nExact Match: 9 / 200 = 0.045000;\nHamming Loss: 626 / 2800 = 0.223571;"
+  },
+  {
+    "macro_f1": 0.39822614644043214,
+    "micro_f1": 0.6992619926199262,
+    "weighted_f1": 0.632218664164307,
+    "exact_match_ratio": 0.02,
+    "hamming_loss": 0.23285714285714285,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.699262;\nMacro F1 (F1 averaged over each label): 0.398226;\nWeighted F1 (F1 weighted by label occurrences): 0.632219;\nExact Match: 4 / 200 = 0.020000;\nHamming Loss: 652 / 2800 = 0.232857;"
+  },
+  {
+    "macro_f1": 0.4211970353333125,
+    "micro_f1": 0.7225920994229915,
+    "weighted_f1": 0.6614853625352664,
+    "exact_match_ratio": 0.04,
+    "hamming_loss": 0.22321428571428573,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.722592;\nMacro F1 (F1 averaged over each label): 0.421197;\nWeighted F1 (F1 weighted by label occurrences): 0.661485;\nExact Match: 8 / 200 = 0.040000;\nHamming Loss: 625 / 2800 = 0.223214;"
+  },
+  {
+    "macro_f1": 0.4255612648701194,
+    "micro_f1": 0.7146763901549681,
+    "weighted_f1": 0.6594061754728179,
+    "exact_match_ratio": 0.025,
+    "hamming_loss": 0.22357142857142856,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.714676;\nMacro F1 (F1 averaged over each label): 0.425561;\nWeighted F1 (F1 weighted by label occurrences): 0.659406;\nExact Match: 5 / 200 = 0.025000;\nHamming Loss: 626 / 2800 = 0.223571;"
+  },
+  {
+    "macro_f1": 0.4472714731401339,
+    "micro_f1": 0.7101584342963655,
+    "weighted_f1": 0.663141574260614,
+    "exact_match_ratio": 0.035,
+    "hamming_loss": 0.22214285714285714,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.710158;\nMacro F1 (F1 averaged over each label): 0.447271;\nWeighted F1 (F1 weighted by label occurrences): 0.663142;\nExact Match: 7 / 200 = 0.035000;\nHamming Loss: 622 / 2800 = 0.222143;"
+  },
+  {
+    "macro_f1": 0.44733608684053144,
+    "micro_f1": 0.6727622714148219,
+    "weighted_f1": 0.6349703897178539,
+    "exact_match_ratio": 0.03,
+    "hamming_loss": 0.24285714285714285,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.672762;\nMacro F1 (F1 averaged over each label): 0.447336;\nWeighted F1 (F1 weighted by label occurrences): 0.634970;\nExact Match: 6 / 200 = 0.030000;\nHamming Loss: 680 / 2800 = 0.242857;"
+  },
+  {
+    "macro_f1": 0.46503938049503574,
+    "micro_f1": 0.6901017576318225,
+    "weighted_f1": 0.6568490474592176,
+    "exact_match_ratio": 0.035,
+    "hamming_loss": 0.2392857142857143,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.690102;\nMacro F1 (F1 averaged over each label): 0.465039;\nWeighted F1 (F1 weighted by label occurrences): 0.656849;\nExact Match: 7 / 200 = 0.035000;\nHamming Loss: 670 / 2800 = 0.239286;"
+  },
+  {
+    "macro_f1": 0.45499843628013753,
+    "micro_f1": 0.6784550953932063,
+    "weighted_f1": 0.644663402645096,
+    "exact_match_ratio": 0.01,
+    "hamming_loss": 0.24678571428571427,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.678455;\nMacro F1 (F1 averaged over each label): 0.454998;\nWeighted F1 (F1 weighted by label occurrences): 0.644663;\nExact Match: 2 / 200 = 0.010000;\nHamming Loss: 691 / 2800 = 0.246786;"
+  },
+  {
+    "macro_f1": 0.445493092969218,
+    "micro_f1": 0.6756630991158679,
+    "weighted_f1": 0.639446641562277,
+    "exact_match_ratio": 0.02,
+    "hamming_loss": 0.24892857142857142,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.675663;\nMacro F1 (F1 averaged over each label): 0.445493;\nWeighted F1 (F1 weighted by label occurrences): 0.639447;\nExact Match: 4 / 200 = 0.020000;\nHamming Loss: 697 / 2800 = 0.248929;"
+  },
+  {
+    "macro_f1": 0.44761205537838655,
+    "micro_f1": 0.6706808707735062,
+    "weighted_f1": 0.6380595209933881,
+    "exact_match_ratio": 0.03,
+    "hamming_loss": 0.25392857142857145,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.670681;\nMacro F1 (F1 averaged over each label): 0.447612;\nWeighted F1 (F1 weighted by label occurrences): 0.638060;\nExact Match: 6 / 200 = 0.030000;\nHamming Loss: 711 / 2800 = 0.253929;"
+  },
+  {
+    "macro_f1": 0.4427854200375071,
+    "micro_f1": 0.6639042357274402,
+    "weighted_f1": 0.6323199958743592,
+    "exact_match_ratio": 0.02,
+    "hamming_loss": 0.26071428571428573,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.663904;\nMacro F1 (F1 averaged over each label): 0.442785;\nWeighted F1 (F1 weighted by label occurrences): 0.632320;\nExact Match: 4 / 200 = 0.020000;\nHamming Loss: 730 / 2800 = 0.260714;"
+  },
+  {
+    "macro_f1": 0.4490713867992892,
+    "micro_f1": 0.6654478976234004,
+    "weighted_f1": 0.6403877624725828,
+    "exact_match_ratio": 0.025,
+    "hamming_loss": 0.26142857142857145,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.665448;\nMacro F1 (F1 averaged over each label): 0.449071;\nWeighted F1 (F1 weighted by label occurrences): 0.640388;\nExact Match: 5 / 200 = 0.025000;\nHamming Loss: 732 / 2800 = 0.261429;"
+  },
+  {
+    "macro_f1": 0.45412412680062175,
+    "micro_f1": 0.666365280289331,
+    "weighted_f1": 0.6401644702593476,
+    "exact_match_ratio": 0.03,
+    "hamming_loss": 0.26357142857142857,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.666365;\nMacro F1 (F1 averaged over each label): 0.454124;\nWeighted F1 (F1 weighted by label occurrences): 0.640164;\nExact Match: 6 / 200 = 0.030000;\nHamming Loss: 738 / 2800 = 0.263571;"
+  },
+  {
+    "macro_f1": 0.4541780914035646,
+    "micro_f1": 0.6732941708088568,
+    "weighted_f1": 0.6459542681926329,
+    "exact_match_ratio": 0.03,
+    "hamming_loss": 0.25821428571428573,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.673294;\nMacro F1 (F1 averaged over each label): 0.454178;\nWeighted F1 (F1 weighted by label occurrences): 0.645954;\nExact Match: 6 / 200 = 0.030000;\nHamming Loss: 723 / 2800 = 0.258214;"
+  },
+  {
+    "macro_f1": 0.45320055193585185,
+    "micro_f1": 0.6663628076572471,
+    "weighted_f1": 0.6396199403827699,
+    "exact_match_ratio": 0.025,
+    "hamming_loss": 0.26142857142857145,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.666363;\nMacro F1 (F1 averaged over each label): 0.453201;\nWeighted F1 (F1 weighted by label occurrences): 0.639620;\nExact Match: 5 / 200 = 0.025000;\nHamming Loss: 732 / 2800 = 0.261429;"
+  },
+  {
+    "macro_f1": 0.4553180198146478,
+    "micro_f1": 0.6633707865168539,
+    "weighted_f1": 0.6400648290009506,
+    "exact_match_ratio": 0.035,
+    "hamming_loss": 0.2675,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.663371;\nMacro F1 (F1 averaged over each label): 0.455318;\nWeighted F1 (F1 weighted by label occurrences): 0.640065;\nExact Match: 7 / 200 = 0.035000;\nHamming Loss: 749 / 2800 = 0.267500;"
+  },
+  {
+    "macro_f1": 0.4522553944632753,
+    "micro_f1": 0.6633348477964561,
+    "weighted_f1": 0.6379492228060066,
+    "exact_match_ratio": 0.035,
+    "hamming_loss": 0.2646428571428571,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.663335;\nMacro F1 (F1 averaged over each label): 0.452255;\nWeighted F1 (F1 weighted by label occurrences): 0.637949;\nExact Match: 7 / 200 = 0.035000;\nHamming Loss: 741 / 2800 = 0.264643;"
+  },
+  {
+    "macro_f1": 0.4502063683335123,
+    "micro_f1": 0.6625,
+    "weighted_f1": 0.6401175625573833,
+    "exact_match_ratio": 0.03,
+    "hamming_loss": 0.27,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.662500;\nMacro F1 (F1 averaged over each label): 0.450206;\nWeighted F1 (F1 weighted by label occurrences): 0.640118;\nExact Match: 6 / 200 = 0.030000;\nHamming Loss: 756 / 2800 = 0.270000;"
+  },
+  {
+    "macro_f1": 0.4533688212067327,
+    "micro_f1": 0.6606170598911071,
+    "weighted_f1": 0.6377005109818388,
+    "exact_match_ratio": 0.035,
+    "hamming_loss": 0.2671428571428571,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.660617;\nMacro F1 (F1 averaged over each label): 0.453369;\nWeighted F1 (F1 weighted by label occurrences): 0.637701;\nExact Match: 7 / 200 = 0.035000;\nHamming Loss: 748 / 2800 = 0.267143;"
+  },
+  {
+    "macro_f1": 0.4526980723401991,
+    "micro_f1": 0.6669630947087595,
+    "weighted_f1": 0.6431274911257067,
+    "exact_match_ratio": 0.03,
+    "hamming_loss": 0.2675,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.666963;\nMacro F1 (F1 averaged over each label): 0.452698;\nWeighted F1 (F1 weighted by label occurrences): 0.643127;\nExact Match: 6 / 200 = 0.030000;\nHamming Loss: 749 / 2800 = 0.267500;"
+  },
+  {
+    "macro_f1": 0.4514853741551879,
+    "micro_f1": 0.6633707865168539,
+    "weighted_f1": 0.640514421237189,
+    "exact_match_ratio": 0.025,
+    "hamming_loss": 0.2675,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.663371;\nMacro F1 (F1 averaged over each label): 0.451485;\nWeighted F1 (F1 weighted by label occurrences): 0.640514;\nExact Match: 5 / 200 = 0.025000;\nHamming Loss: 749 / 2800 = 0.267500;"
+  },
+  {
+    "macro_f1": 0.44929094685490767,
+    "micro_f1": 0.6528028933092224,
+    "weighted_f1": 0.6313618085361028,
+    "exact_match_ratio": 0.035,
+    "hamming_loss": 0.2742857142857143,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.652803;\nMacro F1 (F1 averaged over each label): 0.449291;\nWeighted F1 (F1 weighted by label occurrences): 0.631362;\nExact Match: 7 / 200 = 0.035000;\nHamming Loss: 768 / 2800 = 0.274286;"
+  },
+  {
+    "macro_f1": 0.456291756503166,
+    "micro_f1": 0.6702174877940524,
+    "weighted_f1": 0.6472882042950275,
+    "exact_match_ratio": 0.03,
+    "hamming_loss": 0.26535714285714285,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.670217;\nMacro F1 (F1 averaged over each label): 0.456292;\nWeighted F1 (F1 weighted by label occurrences): 0.647288;\nExact Match: 6 / 200 = 0.030000;\nHamming Loss: 743 / 2800 = 0.265357;"
+  },
+  {
+    "macro_f1": 0.4514298020901662,
+    "micro_f1": 0.658886894075404,
+    "weighted_f1": 0.6381814314036915,
+    "exact_match_ratio": 0.03,
+    "hamming_loss": 0.2714285714285714,
+    "output_str": "Micro F1 (harmonic mean of precision and recall): 0.658887;\nMacro F1 (F1 averaged over each label): 0.451430;\nWeighted F1 (F1 weighted by label occurrences): 0.638181;\nExact Match: 6 / 200 = 0.030000;\nHamming Loss: 760 / 2800 = 0.271429;"
+  }
+]
