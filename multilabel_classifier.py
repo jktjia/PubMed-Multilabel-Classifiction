@@ -40,6 +40,7 @@ def _parse_args():
         default="FULL",
         help="dataset size for training (FULL, MED, or SMALL)",
     )
+    parser.add_argument("--output", action=argparse.BooleanOptionalAction, default=True)
     args = parser.parse_args()
     return args
 
@@ -86,8 +87,8 @@ if __name__ == "__main__":
             num_labels=len(processed_labels),
             vocab=vocab,
             embedding_layer=embedding_layer,
-            plot_loss=True,
-            output_epoch_metrics=True,
+            plot_loss=args.output,
+            output_epoch_metrics=args.output,
         )
     elif args.model == "CNN":
         model = train_CNN(
@@ -97,8 +98,8 @@ if __name__ == "__main__":
             num_labels=len(processed_labels),
             vocab=vocab,
             embedding_layer=embedding_layer,
-            plot_loss=True,
-            output_epoch_metrics=True,
+            plot_loss=args.output,
+            output_epoch_metrics=args.output,
         )
     elif args.model == "RNN":
         model = train_RNN(
@@ -108,8 +109,8 @@ if __name__ == "__main__":
             num_labels=len(processed_labels),
             vocab=vocab,
             embedding_layer=embedding_layer,
-            plot_loss=True,
-            output_epoch_metrics=True,
+            plot_loss=args.output,
+            output_epoch_metrics=args.output,
         )
     elif args.model == "BERT":  # best learning with 0.0001
         print("\n=====READ=====\n")
@@ -131,8 +132,8 @@ if __name__ == "__main__":
     print("\n=====Dev Accuracy=====\n")
     print_eval(model, dev_exs)
 
-    # print("\n=====Test Accuracy=====\n")
-    # print_eval(model, test_exs)
+    print("\n=====Test Accuracy=====\n")
+    print_eval(model, test_exs)
 
     train_eval_time = time.time() - start_time
     print("\nTime for training and evaluation: %.2f seconds" % train_eval_time)

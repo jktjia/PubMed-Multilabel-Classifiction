@@ -18,7 +18,7 @@ default_embed_size = 256
 default_hidden_size = 128
 
 PLOT_DIR = "plots"
-OUTPUT_DIR = "outputs"
+OUTPUT_DIR = "out"
 
 
 class MultilabelClassifier(object):

@@ -1,52 +1,75 @@
 % Use this file for citations not found in the ACL Anthology (contained in "anthology.bib").
 
-@inproceedings{peng2021multilabelclassificationwithRNN,
-  author    = {Peng, Zhiyuan and Abdollahi, Behnoush and Xie, Min and Fang, Yi},
-  title     = {Multi-label Classification of Short Texts with Label Correlated Recurrent Neural Networks},
-  year      = {2021},
-  isbn      = {9781450386111},
-  publisher = {Association for Computing Machinery},
-  address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/3471158.3472246},
-  doi       = {10.1145/3471158.3472246},
-  abstract  = {Short texts are commonly seen nowadays on the Internet in various forms such as tweets, queries, comments, status updates, snippets of search results, and reviews from social platforms. Accurate categorization of these short texts is critical for enhancing information services as it provides the foundation for better search and recommendation. In many real-world applications, a short text is often associated with multiple categories. Due to the sparsity of context information, traditional multi-label classification methods do not perform well on short texts. In this paper, we propose a novel Label Correlated Recurrent Neural Network (LC-RNN) for multi-label classification of short texts by exploiting correlations between categories. We utilize a tree structure to represent the relationships among labels and consequently an efficient max-product algorithm can be developed for exact inference of label prediction. We conduct experiments on four testbeds and the results demonstrate the effectiveness of the proposed model.},
-  booktitle = {Proceedings of the 2021 ACM SIGIR International Conference on Theory of Information Retrieval},
-  pages     = {119–122},
-  numpages  = {4},
-  keywords  = {short text, multi-label classification, RNN},
-  location  = {Virtual Event, Canada},
-  series    = {ICTIR '21}
+@inproceedings{devlin2019,
+  title     = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  author    = {Devlin, Jacob  and
+               Chang, Ming-Wei  and
+               Lee, Kenton  and
+               Toutanova, Kristina},
+  editor    = {Burstein, Jill  and
+               Doran, Christy  and
+               Solorio, Thamar},
+  booktitle = {Proceedings of the 2019 Conference of the North {A}merican Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers)},
+  month     = jun,
+  year      = {2019},
+  address   = {Minneapolis, Minnesota},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/N19-1423/},
+  doi       = {10.18653/v1/N19-1423},
+  pages     = {4171--4186},
+  abstract  = {We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models (Peters et al., 2018a; Radford et al., 2018), BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5 (7.7 point absolute improvement), MultiNLI accuracy to 86.7{\%} (4.6{\%} absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).}
 }
 
-@misc{schonlau2023multilabelclassificationopenendedquestions,
-  title         = {Multi-label classification of open-ended questions with BERT},
-  author        = {Matthias Schonlau and Julia Weiß and Jan Marquardt},
-  year          = {2023},
-  eprint        = {2304.02945},
-  archiveprefix = {arXiv},
-  primaryclass  = {stat.AP},
-  url           = {https://arxiv.org/abs/2304.02945}
+@article{hochreiter1997,
+  author     = {Hochreiter, Sepp and Schmidhuber, J\"{u}rgen},
+  title      = {Long Short-Term Memory},
+  year       = {1997},
+  issue_date = {November 15, 1997},
+  publisher  = {MIT Press},
+  address    = {Cambridge, MA, USA},
+  volume     = {9},
+  number     = {8},
+  issn       = {0899-7667},
+  url        = {https://doi.org/10.1162/neco.1997.9.8.1735},
+  doi        = {10.1162/neco.1997.9.8.1735},
+  abstract   = {Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter's (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.},
+  journal    = {Neural Comput.},
+  month      = nov,
+  pages      = {1735–1780},
+  numpages   = {46}
 }
 
-@inproceedings{wang2023multilabelclassificationglovenn,
-  author    = {Wang, Hongren},
-  booktitle = {2023 3rd International Conference on Electronic Information Engineering and Computer (EIECT)},
-  title     = {Multi-label Text Classification using GloVe and Neural Network Models},
-  year      = {2023},
-  volume    = {},
-  number    = {},
-  pages     = {512-515},
-  keywords  = {Navigation;Scalability;Text categorization;Neural networks;Computer architecture;Task analysis;Probes;component;Natural Language Processing;Multi-label Text Classification;GloVe;CNN-BiLSTM},
-  doi       = {10.1109/EIECT60552.2023.10442284}
+@inproceedings{kim2014,
+  title     = {Convolutional Neural Networks for Sentence Classification},
+  author    = {Kim, Yoon},
+  editor    = {Moschitti, Alessandro  and
+               Pang, Bo  and
+               Daelemans, Walter},
+  booktitle = {Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing ({EMNLP})},
+  month     = oct,
+  year      = {2014},
+  address   = {Doha, Qatar},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/D14-1181/},
+  doi       = {10.3115/v1/D14-1181},
+  pages     = {1746--1751}
 }
 
-@inproceedings{cp2013,
-  author = {C.P, Prathibhamol and Jyothy, K and Noora, B},
-  year   = {2016},
-  month  = {09},
-  pages  = {2708-2712},
-  title  = {Multi label classification based on logistic regression (MLC-LR)},
-  doi    = {10.1109/ICACCI.2016.7732470}
+@article{lee2020,
+  abstract   = {Biomedical text mining is becoming increasingly important as the number of biomedical documents rapidly grows. With the progress in natural language processing (NLP), extracting valuable information from biomedical literature has gained popularity among researchers, and deep learning has boosted the development of effective biomedical text mining models. However, directly applying the advancements in NLP to biomedical text mining often yields unsatisfactory results due to a word distribution shift from general domain corpora to biomedical corpora. In this article, we investigate how the recently introduced pre-trained language model BERT can be adapted for biomedical corpora.We introduce BioBERT (Bidirectional Encoder Representations from Transformers for Biomedical Text Mining), which is a domain-specific language representation model pre-trained on large-scale biomedical corpora. With almost the same architecture across tasks, BioBERT largely outperforms BERT and previous state-of-the-art models in a variety of biomedical text mining tasks when pre-trained on biomedical corpora. While BERT obtains performance comparable to that of previous state-of-the-art models, BioBERT significantly outperforms them on the following three representative biomedical text mining tasks: biomedical named entity recognition (0.62\% F1 score improvement), biomedical relation extraction (2.80\% F1 score improvement) and biomedical question answering (12.24\% MRR improvement). Our analysis results show that pre-training BERT on biomedical corpora helps it to understand complex biomedical texts.We make the pre-trained weights of BioBERT freely available at https://github.com/naver/biobert-pretrained, and the source code for fine-tuning BioBERT available at https://github.com/dmis-lab/biobert.},
+  author     = {Lee, Jinhyuk and Yoon, Wonjin and Kim, Sungdong and Kim, Donghyeon and Kim, Sunkyu and So, Chan Ho and Kang, Jaewoo},
+  doi        = {10.1093/bioinformatics/btz682},
+  issn       = {1367-4803},
+  journal    = {Bioinformatics},
+  month      = sep,
+  note       = {\_eprint: https://academic.oup.com/bioinformatics/article-pdf/36/4/1234/48983216/bioinformatics\_36\_4\_1234.pdf},
+  number     = {4},
+  pages      = {1234--1240},
+  title      = {{BioBERT}: a pre-trained biomedical language representation model for biomedical text mining},
+  url        = {https://doi.org/10.1093/bioinformatics/btz682},
+  volume     = {36},
+  year       = {2019},
+  bdsk-url-1 = {https://doi.org/10.1093/bioinformatics/btz682}
 }
 
 @inproceedings{mao2017,
@@ -73,76 +96,14 @@
   doi     = {10.4018/jdwm.2007070101}
 }
 
-@inproceedings{kim2014,
-  title     = {Convolutional Neural Networks for Sentence Classification},
-  author    = {Kim, Yoon},
-  editor    = {Moschitti, Alessandro  and
-               Pang, Bo  and
-               Daelemans, Walter},
-  booktitle = {Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing ({EMNLP})},
-  month     = oct,
-  year      = {2014},
-  address   = {Doha, Qatar},
-  publisher = {Association for Computational Linguistics},
-  url       = {https://aclanthology.org/D14-1181/},
-  doi       = {10.3115/v1/D14-1181},
-  pages     = {1746--1751}
-}
-
-@article{hochreiter1997,
-  author     = {Hochreiter, Sepp and Schmidhuber, J\"{u}rgen},
-  title      = {Long Short-Term Memory},
-  year       = {1997},
-  issue_date = {November 15, 1997},
-  publisher  = {MIT Press},
-  address    = {Cambridge, MA, USA},
-  volume     = {9},
-  number     = {8},
-  issn       = {0899-7667},
-  url        = {https://doi.org/10.1162/neco.1997.9.8.1735},
-  doi        = {10.1162/neco.1997.9.8.1735},
-  abstract   = {Learning to store information over extended time intervals by recurrent backpropagation takes a very long time, mostly because of insufficient, decaying error backflow. We briefly review Hochreiter's (1991) analysis of this problem, then address it by introducing a novel, efficient, gradient based method called long short-term memory (LSTM). Truncating the gradient where this does not do harm, LSTM can learn to bridge minimal time lags in excess of 1000 discrete-time steps by enforcing constant error flow through constant error carousels within special units. Multiplicative gate units learn to open and close access to the constant error flow. LSTM is local in space and time; its computational complexity per time step and weight is O. 1. Our experiments with artificial data involve local, distributed, real-valued, and noisy pattern representations. In comparisons with real-time recurrent learning, back propagation through time, recurrent cascade correlation, Elman nets, and neural sequence chunking, LSTM leads to many more successful runs, and learns much faster. LSTM also solves complex, artificial long-time-lag tasks that have never been solved by previous recurrent network algorithms.},
-  journal    = {Neural Comput.},
-  month      = nov,
-  pages      = {1735–1780},
-  numpages   = {46}
-}
-
-@inproceedings{devlin2019,
-  title     = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
-  author    = {Devlin, Jacob  and
-               Chang, Ming-Wei  and
-               Lee, Kenton  and
-               Toutanova, Kristina},
-  editor    = {Burstein, Jill  and
-               Doran, Christy  and
-               Solorio, Thamar},
-  booktitle = {Proceedings of the 2019 Conference of the North {A}merican Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers)},
-  month     = jun,
-  year      = {2019},
-  address   = {Minneapolis, Minnesota},
-  publisher = {Association for Computational Linguistics},
-  url       = {https://aclanthology.org/N19-1423/},
-  doi       = {10.18653/v1/N19-1423},
-  pages     = {4171--4186},
-  abstract  = {We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models (Peters et al., 2018a; Radford et al., 2018), BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5 (7.7 point absolute improvement), MultiNLI accuracy to 86.7{\%} (4.6{\%} absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).}
-}
-
-
-@article{lee2020,
-  abstract   = {Biomedical text mining is becoming increasingly important as the number of biomedical documents rapidly grows. With the progress in natural language processing (NLP), extracting valuable information from biomedical literature has gained popularity among researchers, and deep learning has boosted the development of effective biomedical text mining models. However, directly applying the advancements in NLP to biomedical text mining often yields unsatisfactory results due to a word distribution shift from general domain corpora to biomedical corpora. In this article, we investigate how the recently introduced pre-trained language model BERT can be adapted for biomedical corpora.We introduce BioBERT (Bidirectional Encoder Representations from Transformers for Biomedical Text Mining), which is a domain-specific language representation model pre-trained on large-scale biomedical corpora. With almost the same architecture across tasks, BioBERT largely outperforms BERT and previous state-of-the-art models in a variety of biomedical text mining tasks when pre-trained on biomedical corpora. While BERT obtains performance comparable to that of previous state-of-the-art models, BioBERT significantly outperforms them on the following three representative biomedical text mining tasks: biomedical named entity recognition (0.62\% F1 score improvement), biomedical relation extraction (2.80\% F1 score improvement) and biomedical question answering (12.24\% MRR improvement). Our analysis results show that pre-training BERT on biomedical corpora helps it to understand complex biomedical texts.We make the pre-trained weights of BioBERT freely available at https://github.com/naver/biobert-pretrained, and the source code for fine-tuning BioBERT available at https://github.com/dmis-lab/biobert.},
-  author     = {Lee, Jinhyuk and Yoon, Wonjin and Kim, Sungdong and Kim, Donghyeon and Kim, Sunkyu and So, Chan Ho and Kang, Jaewoo},
-  doi        = {10.1093/bioinformatics/btz682},
-  issn       = {1367-4803},
-  journal    = {Bioinformatics},
-  month      = sep,
-  note       = {\_eprint: https://academic.oup.com/bioinformatics/article-pdf/36/4/1234/48983216/bioinformatics\_36\_4\_1234.pdf},
-  number     = {4},
-  pages      = {1234--1240},
-  title      = {{BioBERT}: a pre-trained biomedical language representation model for biomedical text mining},
-  url        = {https://doi.org/10.1093/bioinformatics/btz682},
-  volume     = {36},
-  year       = {2019},
-  bdsk-url-1 = {https://doi.org/10.1093/bioinformatics/btz682}
+@article{zhang2025,
+  author  = {Zhang, Wei and Jiang, Yun and Fang, Yun and Pan, Shuai},
+  year    = {2025},
+  month   = {04},
+  pages   = {},
+  title   = {Hierarchical contrastive learning for multi-label text classification},
+  volume  = {15},
+  journal = {Scientific Reports},
+  doi     = {10.1038/s41598-025-97597-w}
 }
 

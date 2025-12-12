@@ -137,10 +137,10 @@ if __name__ == "__main__":
 
     if args.plots == "ALL" or args.plots == "PERF":
         model_paths = {
-            "LR": f"outputs/{SIZE}/lr_output.json",
-            "CNN": f"outputs/{SIZE}/cnn_output.json",
-            "RNN": f"outputs/{SIZE}/rnn_output.json",
-            "BERT": f"outputs/{SIZE}/bert_output.json",
+            "LR": f"out/{SIZE}/lr_output.json",
+            "CNN": f"out/{SIZE}/cnn_output.json",
+            "RNN": f"out/{SIZE}/rnn_output.json",
+            "BERT": f"out/{SIZE}/bert_output.json",
         }
         perf = _read_performance(model_paths=model_paths)
         print("\nRead in performance data for %i models" % len(model_paths))

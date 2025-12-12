@@ -9,12 +9,7 @@ The data used in this project comes from [PubMed MultiLabel Text Classification 
 To train and test the multilabel classifiers locally on small versions of the datasets, run the following command:
 
 ```
-python multilabel_classifier.py [--model MODEL] [--learning_rate LEARNING_RATE] [--num_epochs NUM_EPOCHS] [--batch_size BATCH_SIZE] [--dataset DATASET]
+python multilabel_classifier.py --dataset SMALL [--model MODEL] [--learning_rate LEARNING_RATE] [--num_epochs NUM_EPOCHS] [--batch_size BATCH_SIZE]
 ```
 
-Currently, the available models are TRIVIAL (trivial classifier that assigns every label as false), LR (logistic regression), CNN, RNN and BERT (BioBert). Bert runner is for demo-ing in model-class format - for actual run BERT_Colab/BERT_Colab_run.ipynb (>2 hrs train time on A100)
-
-## Results
-
-BERT_Colab/bert_metrics_25epochs.json - Loss, Micro/Macro F1, Weighted F1.. for full dataset
-BERT_Colab/bert_metrics_25epochs_small.json - Loss, Micro/Macro F1, Weighted F1.. for small dataset
+Currently, the available models are TRIVIAL (trivial classifier that assigns every label as false), LR (logistic regression), CNN, RNN and BERT (BioBert). BERT runner is for demo-ing in model-class format - for actual run use BERT_Colab/BERT_Colab_run.ipynb (>2 hrs train time on A100)

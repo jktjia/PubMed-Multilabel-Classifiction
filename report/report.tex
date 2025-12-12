@@ -214,15 +214,19 @@ article abstracts are an average of 222 tokens long (see Figure 3).
 
 \section{Methods}
 
-We adjusted the BioBERT model (biobert-base-cased-v1.2) to assign medical summaries to up to 14 MeSH
-groups that may overlap. Texts were processed using BioBERT’s cased WordPiece tokenizer, which inserts special [CLS] and [SEP] tokens and pads or truncates sequences to a fixed length of 128 tokens.
-Instead of stacking multiple layers, a single linear module was connected to the model's
-final output, transforming hidden states into 14 separate prediction values. This meant the final hidden state of just the [CLS] token was passed through a single linear layer that produced 14 independent logits. Since articles might
-fit more than one label at once, outputs used individual sigmoid functions per node, avoiding softmax
-which assumes exclusive classes. This setup allowed parallel probability estimates across topics.
-Training relied on BCEWithLogitsLoss---a unified method combining sigmoids and binary loss---for
-better computational reliability during optimization. The entire BioBERT encoder and classification head were fine-tuned jointly using the AdamW optimizer. At prediction time, a fixed cutoff of 0.5 was
-used; categories surpassing the cutoff were linked to the text.
+We adjusted the BioBERT model (biobert-base-cased-v1.2) to assign medical summaries to up to 14
+MeSH groups that may overlap. Texts were processed using BioBERT's cased WordPiece tokenizer,
+which inserts special [CLS] and [SEP] tokens and pads or truncates sequences to a fixed length of
+128 tokens. Instead of stacking multiple layers, a single linear module was connected to the
+model's final output, transforming hidden states into 14 separate prediction values. This meant the
+final hidden state of just the [CLS] token was passed through a single linear layer that produced
+14 independent logits. Since articles might fit more than one label at once, outputs used
+individual sigmoid functions per node, avoiding softmax which assumes exclusive classes. This setup
+allowed parallel probability estimates across topics. Training relied on BCEWithLogitsLoss---a
+unified method combining sigmoids and binary loss---for better computational reliability during
+optimization. The entire BioBERT encoder and classification head were fine-tuned jointly using the
+AdamW optimizer. At prediction time, a fixed cutoff of 0.5 was used; categories surpassing the
+cutoff were linked to the text.
 
 The performance of the fine-tuned BERT model was measured against three baseline models which were
 trained as follows.
@@ -287,20 +291,20 @@ results.
 	\label{fig:perf_metrics}
 \end{figure*}
 
-All of the baseline models were trained over 25 epochs, using an initial learning rate of 0.001 with
-Adam optimization, on both reduced-size and full-size versions of the dataset.
+We used micro F1, macro F1, weighted-average F1, exact match ratio, and Hamming loss to evaluate
+the performance of each model. Micro F1 calculates the F1 score using precision and recall over
+all of the labels at once, while the macro F1 calculates the F1 for each label and returns the
+average across the labels. Similarly to macro F1, weighted-average F1 calculates the F1 for each
+label and returns the weighted average. The exact match ratio measures how many predictions exactly
+matched every label, and Hamming loss measures how many labels were predicted incorrectly across
+all labels. Higher F1 scores and exact match ratios indicate better performance, and lower Hamming
+loss indicates better performance.
 
-At the end of each epoch, the micro F1, macro F1, weighted-average F1, exact match ratio, and
-Hamming loss for the dev dataset were calculated. Micro F1 calculates the F1 score using precision
-and recall over all of the labels at once, while the macro F1 calculates the F1 for each label and
-returns the average across the labels. Similarly to macro F1, weighted-average F1 calculates the F1
-for each label and returns the weighted average. The exact match ratio measures how many
-predictions exactly matched every label, and Hamming loss measures how many labels were predicted
-incorrectly across all labels. Higher F1 scores and exact match ratios indicate better performance,
-and lower Hamming loss indicates better performance. Together, these five metrics were used to
-measure the performance of each of the models.
-
-
+The learning rate for each model was determined with separate tests for each model on the dev
+dataset. All of the models were trained over 25 epochs, using an initial learning rate of 0.001 for
+the baselines and 0.0001 for the BERT model with Adam optimization, on both reduced-size and
+full-size versions of the dataset. At the end of each epoch, the evalutation metrics were calculated
+for on dev dataset to determine the ideal number of epochs for tests.
 
 \subsection{Results}
 
@@ -309,24 +313,38 @@ classification task. Micro and Macro F1 are higher for BioBERT compared to the b
 which shows that even with class imbalance BioBERT beats out the baseline. The amount by which
 BioBERT beats all three baselines is more for the smaller dataset, with performance at around
 0.7-0.8, and this shows the difference between the BERT fine-tuning vs. training from start in
-the baseline models. This difference across reduced and full data continues across to Exact match
-ratio and hamming loss: BioBERT has lower hamming loss and higher exact match ratio than baseline.
+the baseline models. This difference across reduced and full data continues across to exact match
+ratio and Hamming loss: BioBERT has lower Hamming loss and higher exact match ratio than baseline.
 
-The RNN model performed best of the three baseline models. It had the highest macro and
-weighted-average F1 scores of the three baseline models over all 25 epochs, and performed best
-with regard to micro F1, exact match ratio, and Hamming loss for most of training.
+Although it is the most straightforward model, linear regression the best performance of the
+baseline models. Linear regression had worse performance than RNN with regard to F1 scores the
+first several epochs of training, the model using linear regression had better performance with
+regard to all metrics past 7 epochs of training.
 
-Although linear regression had worse performance than RNN across all five metrics for the first
-several epochs of training, the model using linear regression had the marginally better performance
-with regard to micro F1, exact match ratio, and Hamming loss past 15 epochs of training.
+RNN had the best initial performance of the baseline models, but peaked in performance about 5
+epochs into training, allowing linear regression to surpass RNN.
 
 The CNN model had by far the worst performance, with lower F1 scores, lower exact match ratios, and
 higher Hamming loss for the majority of training. CNN only performed better than logistic regression
-for the first two epochs, and never performed better than RNN for any evaluation metric.
+for the first one or two epochs, and never performed better than RNN for any evaluation metric.
 
 \section{Conclusions}
 
-Present your discussion/conclusions.
+From this project, it is clear BioBERT performs better than the baseline models. This
+illustrates the importance of properly pretraining  embeddings, particularly when the subject
+matter requires expert knowledge to understand, as with  biomedical research. Even with large
+amounts of training data and several epochs of training, the baseline models approach the
+performance of BioBERT but do not surpass it.
+
+The next steps for this work would be to assess the performance of BERT-based models for the more
+complicated task of predicting the full nested MeSH labels of PubMed articles. In particular,
+evaluating the performance of a more naive BERT model against both hierarchical multilabel
+classification models---which model the nested hierarchy of the labels when making
+predictions---and a model that uses BERT embeddings alongside hierarchical multilabel classification
+model \cite{zhang2025}. Another way of expanding this project would be to compare BioBERT, a
+word2vec model trained on biomedical text, and similar models trained on less specific datasets, in
+order to assess the importance of pretraining embeddings on text which uses the highly specialized
+vocabulary used in biomedical research papers.
 
 \bibliography{custom,anthology}
 \bibliographystyle{acl_natbib}
