@@ -2,20 +2,27 @@ from typing import List
 
 
 def print_eval(classifier, exs):
+    """
+    Prints the summary string of the evaluation of the given classifier on the given examples.
+
+    Args:
+        classifier (MultilabelClassifier): classifier to evaluate
+        exs: the list of examples to evaluate on
+    """
     eval = evaluate(classifier=classifier, exs=exs)
     print(eval["output_str"])
 
 
 def evaluate(classifier, exs):
     """
-    Evaluates a given classifier on the given examples
+    Evaluates a given classifier on the given examples.
 
     Args:
         classifier (MultilabelClassifier): classifier to evaluate
         exs: the list of examples to evaluate on
 
     Returns:
-        (float, float, float, float, float): micro, macro, and weighted average F1, exact match ratio, and hamming loss
+        dict[str, float]: micro, macro, and weighted average F1, exact match ratio, and hamming loss, as well as string summary
     """
     return _calculate_eval(
         exs[1],
@@ -26,7 +33,7 @@ def evaluate(classifier, exs):
 
 def _calculate_eval(
     golds: List[List[int]], predictions: List[List[int]], num_labels: int
-) -> dict[str, float | str]:
+) -> dict[str, float]:
     """
     Prints evaluation statistics comparing golds and predictions, each of which is a sequence of 0/1 labels.
     Prints accuracy as well as micro, macro, and weighted average F1 of the positive class in addition to the number of exact matches.
@@ -36,7 +43,7 @@ def _calculate_eval(
         predictions (List[List[int]]): pred labels
 
     Returns:
-        dict[str,float]: micro, macro, and weighted average F1, exact match ratio, and hamming loss
+        dict[str,float]: micro, macro, and weighted average F1, exact match ratio, and hamming loss, as well as string summary
     """
     num_correct = [0] * num_labels
     num_pos_correct = [0] * num_labels
@@ -68,24 +75,6 @@ def _calculate_eval(
             num_total[i] += 1
         if exact_match:
             num_match += 1
-
-    # output_str = "Total Accuracy: %i / %i = %f;\n" % (
-    #     sum(num_correct),
-    #     sum(num_total),
-    #     float(sum(num_correct)) / sum(num_total),
-    # )
-    # label_acc = [
-    #     float(num_correct[i]) / num_total[i] if num_total[i] > 0 else 0.0
-    #     for i in range(num_labels)
-    # ]
-    # for i, label in enumerate(processed_labels):
-    #     output_str += "%s Accuracy: %i / %i = %f;\n" % (
-    #         label,
-    #         num_correct[i],
-    #         num_total[i],
-    #         label_acc[i],
-    #     )
-    # output_str += "\n"
 
     prec = [
         float(num_pos_correct[i]) / num_pred[i] if num_pred[i] > 0 else 0.0

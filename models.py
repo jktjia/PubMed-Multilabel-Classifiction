@@ -29,29 +29,29 @@ class MultilabelClassifier(object):
     def __init__(self, num_labels):
         self.num_labels = num_labels
 
-    def predict(self, ex_words: List[str]) -> List[int]:
+    def predict(self, ex: str) -> List[int]:
         """
         Makes a prediction on the given sentence
 
         Args:
-            ex_words (List[str]): words to predict on
+            ex (str): sentence to predict on
 
         Returns:
             List[int]: 0 or 1 for each label
         """
         raise Exception("Don't call me, call my subclasses")
 
-    def predict_all(self, all_ex_words: List[List[str]]) -> List[List[int]]:
+    def predict_all(self, all_ex: List[str]) -> List[List[int]]:
         """
         Makes predictions for each sentence in a given list of sentences
 
         Args:
-            all_ex_words (List[List[str]]): list of sentences to predict
+            all_ex (List[str]): list of sentences to predict
 
         Returns:
             List[List[int]]: 0 or 1 for each label for each sentence
         """
-        return [self.predict(ex_words) for ex_words in all_ex_words]
+        return [self.predict(ex) for ex in all_ex]
 
 
 class TrivialMultilabelClassifier(MultilabelClassifier):
@@ -64,6 +64,10 @@ class TrivialMultilabelClassifier(MultilabelClassifier):
 
 
 class LR(nn.Module):
+    """
+    Multilabel classifier that uses logistic regression to make predictions.
+    """
+
     def __init__(
         self,
         num_labels: int,
@@ -89,6 +93,10 @@ class LR(nn.Module):
 
 
 class CNN(nn.Module):
+    """
+    Multilabel classifier that uses a convolutional neural network to make predictions.
+    """
+
     def __init__(
         self,
         kernel_size: int,
@@ -126,6 +134,10 @@ class CNN(nn.Module):
 
 
 class RNN(nn.Module):
+    """
+    Multilabel classifier that uses a recurrent neural network to make predictions.
+    """
+
     def __init__(
         self,
         num_labels: int,
@@ -158,7 +170,7 @@ class RNN(nn.Module):
 
 class BaselineMultilabelClassifier(MultilabelClassifier):
     """
-    Baseline multilabel classifier
+    Multilabel classifier using one of the baseline models. Splits works using nltk tokenize and indexes words with given vocab.
     """
 
     def __init__(self, num_labels: int, vocab: Indexer, module: nn.Module):
@@ -206,20 +218,19 @@ def train_BaselineClassifier(
     model: nn.Module,
     loss_plot: str | None = None,
     epoch_metrics: str | None = None,
-    min_length: int | None = None,
 ) -> BaselineMultilabelClassifier:
     """
-    Trains a multilabel classifier based on a given model on the given training examples
+    Trains a multilabel classifier based on a given baseline model on the given training examples.
 
     Args:
-        args (_type_): command-line args
-        train_exs (_type_): train examples
-        dev_exs (_type_): dev examples
+        args: command-line args
+        train_exs: train examples
+        dev_exs: dev examples
         num_labels (int): number of labels
         vocab (Indexer): an indexer of the vocabulary in the examples
         model (nn.Module): internal model.
-        plot_loss (bool | None, optional): whether the loss per epoch should be plotted. Defaults to None.
-        output_epoch_metrics (bool | None, optional): whether the performance metrics per epoch should be outputted. Defaults to None.
+        loss_plot (bool | None, optional): whether the loss per epoch should be plotted. Defaults to None.
+        epoch_metrics (bool | None, optional): whether the performance metrics per epoch should be outputted. Defaults to None.
 
     Returns:
         BaselineMultilabelClassifier: trained multilabel classifier
@@ -304,9 +315,9 @@ def train_LR(
     Trains a logistic regression multilabel classifier on the given training examples
 
     Args:
-        args (_type_): command-line args
-        train_exs (_type_): train examples
-        dev_exs (_type_): dev examples
+        args: command-line args
+        train_exs: train examples
+        dev_exs: dev examples
         num_labels (int): number of labels
         vocab (Indexer): an indexer of the vocabulary in the examples
         embedding_layer (nn.Embedding | None, optional): optional pretrained embedding layer. Defaults to None.
@@ -331,7 +342,9 @@ def train_LR(
         vocab,
         model,
         "%s/%s/lr_loss.png" % (PLOT_DIR, args.dataset.lower()) if plot_loss else None,
-        "%s/%s/lr_output.json" % (OUTPUT_DIR, args.dataset.lower()),
+        "%s/%s/lr_output.json" % (OUTPUT_DIR, args.dataset.lower())
+        if output_epoch_metrics
+        else None,
     )
 
 
@@ -346,12 +359,12 @@ def train_CNN(
     output_epoch_metrics: bool | None = None,
 ) -> BaselineMultilabelClassifier:
     """
-    Trains a convolutional neural network regression multilabel classifier on the given training examples
+    Trains a convolutional neural network multilabel classifier on the given training examples
 
     Args:
-        args (_type_): command-line args
-        train_exs (_type_): train examples
-        dev_exs (_type_): dev examples
+        args: command-line args
+        train_exs: train examples
+        dev_exs: dev examples
         num_labels (int): number of labels
         vocab (Indexer): an indexer of the vocabulary in the examples
         embedding_layer (nn.Embedding | None, optional): optional pretrained embedding layer. Defaults to None.
@@ -382,8 +395,9 @@ def train_CNN(
         vocab,
         model,
         "%s/%s/cnn_loss.png" % (PLOT_DIR, args.dataset.lower()) if plot_loss else None,
-        "%s/%s/cnn_output.json" % (OUTPUT_DIR, args.dataset.lower()),
-        min_length=kernel_size,
+        "%s/%s/cnn_output.json" % (OUTPUT_DIR, args.dataset.lower())
+        if output_epoch_metrics
+        else None,
     )
 
 
@@ -398,12 +412,12 @@ def train_RNN(
     output_epoch_metrics: bool | None = None,
 ) -> BaselineMultilabelClassifier:
     """
-    Trains a ==r== neural network regression multilabel classifier on the given training examples
+    Trains a recurrent neural network regression multilabel classifier on the given training examples
 
     Args:
-        args (_type_): command-line args
-        train_exs (_type_): train examples
-        dev_exs (_type_): dev examples
+        args: command-line args
+        train_exs: train examples
+        dev_exs : dev examples
         num_labels (int): number of labels
         vocab (Indexer): an indexer of the vocabulary in the examples
         embedding_layer (nn.Embedding | None, optional): optional pretrained embedding layer. Defaults to None.
@@ -452,17 +466,6 @@ class BERTMultilabelClassifier(MultilabelClassifier):
         )
         self.model.to(self.device)
         self.model.eval()
-
-    # def _words_to_text(self, ex_words: List[str]) -> str:
-    #     """Convert tokenized words back to text string for BERT"""
-    #     # Join words, handling punctuation spacing
-    #     text = " ".join(ex_words)
-    #     # Fix common spacing issues
-    #     import re
-
-    #     text = re.sub(r"\s+([.,!?;:])", r"\1", text)
-    #     text = re.sub(r'(["\'])\s+', r"\1", text)
-    #     return text
 
     def predict(self, ex: str) -> List[int]:
         """
@@ -575,11 +578,10 @@ def train_BERT(
     model.to(device)
 
     # Extract texts and labels from examples
-    # Try to read directly from CSV for better accuracy, otherwise reconstruct from words
-    train_labels = train_exs[1]
     train_texts = train_exs[0]
-    dev_labels = dev_exs[1]
+    train_labels = train_exs[1]
     dev_texts = dev_exs[0]
+    dev_labels = dev_exs[1]
 
     # Validate lengths match
     if len(train_texts) != len(train_labels):

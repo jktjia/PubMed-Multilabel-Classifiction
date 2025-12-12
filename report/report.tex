@@ -98,19 +98,36 @@ detail our data processing, model architectures, experimental setup, and evaluat
 with an analysis of each approach.
 
 \section{Background and Related Work}
+
 The rapid rise in biomedical publications makes it hard for scientists to find useful data. To
 help, the National Library of Medicine (NLM) tags PubMed entries using Medical Subject Headings
 (MeSH), a structured list grouping medical ideas in levels. Yet, tagging by hand takes much effort,
-money, and time - making expansion tough \cite{mao2017}. For this reason, automatic Multi-Label
+money, and time---making expansion tough \cite{mao2017}. For this reason, automatic Multi-Label
 Text Classification (MLTC) has become vital in bio-NLP tasks. In contrast to typical single-label
 sorting, MLTC links several tags to one document, since most health papers cover various subjects
-at once - for example Disorders, Substances, or Treatment Methods \cite{tsoumakas2007}.
+at once---for example Disorders, Substances, or Treatment Methods \cite{tsoumakas2007}.
 
-Before Transformers became common, models for text analysis often used CNNs instead of RNNs. While both handled sequences differently, they formed the base for early deep learning in this area. CNNs started in image processing but later got used for text tasks after Kim’s work \cite{kim2014}, using small sliding filters to spot short meaningful word groups. Although good at finding fixed-length phrases, they usually fail to link distant parts of longer texts because their focus area is narrow. RNNs plus Bi-LSTMs: recurrent systems like Bidirectional Long Short-Term Memory (Bi-LSTM) emerged to handle text step by step. Because they analyze data from left to right - then reverse - they grasp sequence patterns along with word positioning better than fixed bag-of-words methods \cite{hochreiter1997}. Still, such architectures run into processing delays thanks to their linear flow; also, gradients tend to weaken across extended chains.
+Before Transformers became common, models for text analysis often used CNNs instead of RNNs. While
+both handled sequences differently, they formed the base for early deep learning in this area.
+CNNs started in image processing but later got used for text tasks after Kim's work \cite{kim2014},
+using small sliding filters to spot short meaningful word groups. Although good at finding
+fixed-length phrases, they usually fail to link distant parts of longer texts because their focus
+area is narrow. RNNs plus Bi-LSTMs: recurrent systems like Bidirectional Long Short-Term Memory
+(Bi-LSTM) emerged to handle text step by step. Because they analyze data from left to right and
+from right to left, they grasp sequence patterns along with word positioning better than fixed
+bag-of-words methods \cite{hochreiter1997}. Still, such architectures run into processing delays
+thanks to their linear flow; also, gradients tend to weaken across extended chains.
 
-Devlin et al. \cite{devlin2019} introduced BERT along with this new structure, changing how NLP works. Instead of using RNNs, these models rely on self-attention to handle input at once - enabling better understanding of context and links between labels.
+Devlin et al. \cite{devlin2019} introduced BERT along with this new structure, changing how NLP
+works. Instead of using RNNs, these models rely on self-attention to handle input at
+once---enabling better understanding of context and links between labels.
 
-Although standard BERT works well on common tasks, it struggles with biomedical texts because of differences in terminology - like drug names or clinical terms. Instead of using general data, Lee et al. \cite{lee2020} trained BioBERT on specialized sources such as PubMed and PMC, keeping the original structure. This version performs better in spotting entities, finding links between them, also answering medical questions. Here, we use biobert-base-cased-v1.2 to identify specific patterns tied to MeSH labels.
+Although standard BERT works well on common tasks, it struggles with biomedical texts because of
+differences in terminology - like drug names or clinical terms. Instead of using general data,
+Lee et al. \cite{lee2020} trained BioBERT on specialized sources such as PubMed and PMC, keeping
+the original structure. This version performs better in spotting entities, finding links between
+them, also answering medical questions. Here, we use biobert-base-cased-v1.2 to identify specific
+patterns tied to MeSH labels.
 
 \section{Data}
 
@@ -270,21 +287,30 @@ results.
 	\label{fig:perf_metrics}
 \end{figure*}
 
-All of the baseline models were trained over 25 epochs, using an initial learning rate of 0.001 with Adam optimization, on both reduced-size and full-size versions of the dataset.
+All of the baseline models were trained over 25 epochs, using an initial learning rate of 0.001 with
+Adam optimization, on both reduced-size and full-size versions of the dataset.
 
 At the end of each epoch, the micro F1, macro F1, weighted-average F1, exact match ratio, and
-Hamming loss were calculated. Micro F1 calculates the F1 score using precision and recall over all
-of the labels at once, while the macro F1 calculates the F1 for each label and returns the average
-across the labels. Similarly to macro F1, weighted-average F1 calculates the F1 for each label and
-returns the weighted average. The exact match ratio measures how many predictions exactly matched
-every label, and Hamming loss measures how many labels were predicted incorrectly across all
-labels. Higher F1 scores and exact match ratios indicate better performance, and lower Hamming loss
-indicates better performance. Together, these five metrics were used to measure the performance of
-each of the models.
+Hamming loss for the dev dataset were calculated. Micro F1 calculates the F1 score using precision
+and recall over all of the labels at once, while the macro F1 calculates the F1 for each label and
+returns the average across the labels. Similarly to macro F1, weighted-average F1 calculates the F1
+for each label and returns the weighted average. The exact match ratio measures how many
+predictions exactly matched every label, and Hamming loss measures how many labels were predicted
+incorrectly across all labels. Higher F1 scores and exact match ratios indicate better performance,
+and lower Hamming loss indicates better performance. Together, these five metrics were used to
+measure the performance of each of the models.
+
+
 
 \subsection{Results}
 
-Looking at the results, the BioBERT model leads baseline models in performance on the classification task. Micro and Macro F1 are higher for BioBERT compared to the baseline models, which shows that even with class imbalance BioBERT beats out the baseline. The amount by which BioBERT beats all three baselines is more for the smaller dataset, with performance at around 0.7-0.8, and this shows the difference between the BERT fine-tuning vs. training from start in the baseline models. This difference across reduced and full data continues across to Exact match ratio and hamming loss: BioBERT has lower hamming loss and higher exact match ratio than baseline.
+Looking at the results, the BioBERT model leads baseline models in performance on the
+classification task. Micro and Macro F1 are higher for BioBERT compared to the baseline models,
+which shows that even with class imbalance BioBERT beats out the baseline. The amount by which
+BioBERT beats all three baselines is more for the smaller dataset, with performance at around
+0.7-0.8, and this shows the difference between the BERT fine-tuning vs. training from start in
+the baseline models. This difference across reduced and full data continues across to Exact match
+ratio and hamming loss: BioBERT has lower hamming loss and higher exact match ratio than baseline.
 
 The RNN model performed best of the three baseline models. It had the highest macro and
 weighted-average F1 scores of the three baseline models over all 25 epochs, and performed best

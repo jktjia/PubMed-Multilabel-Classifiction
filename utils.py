@@ -8,6 +8,7 @@ from torch.utils.data import TensorDataset
 nltk.download("punkt")
 
 
+# this class is taken from code used in assignments for CS6120
 class Indexer(object):
     """
     Bijection between objects and integers starting at 0. Useful for mapping
@@ -149,6 +150,17 @@ def read_abstract_texts(path):
 
 
 def create_dataset(tokens, labels, vocab: Indexer):
+    """
+    Creates a Tensor dataset with the given tokens and labels by indexing the tokens with the given vocab indexer.
+
+    Args:
+        tokens (List[List[str]]): input sentences that have been tokenized
+        labels (List[List[int]]): actual labels for the sentences
+        vocab (Indexer): indexer for words in vocabulary
+
+    Returns:
+        TensorDataset: Dataset with xs as ints and ys as floats
+    """
     xs = [[vocab.index_of(word) for word in words] for words in tokens]
 
     max_len = max(len(x) for x in xs)
